@@ -10,6 +10,8 @@ class MainTab : public QWidget {
 public:
     MainTab(QWidget *parent = 0);
     void addColumn(const char* label);
+    MainTab* setupAsFirstTab();
+//    void setLayout(QLayout *layout);
 
 private:
     QHBoxLayout * mainLayout;

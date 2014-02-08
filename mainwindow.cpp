@@ -6,13 +6,20 @@
 #include <QMenu>
 #include <QToolBar>
 #include <QMenuBar>
-//#include <QKeySequence>
+#include <QTabBar>
+#include <QScrollArea>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
     tabWidget = new QTabWidget;
-    tabWidget->addTab(new MainTab(), tr("Main"));
+
+    QScrollArea *firstScroll = new QScrollArea();
+    firstScroll->setBackgroundRole(QPalette::Dark);
+    MainTab * firstTab = (new MainTab())->setupAsFirstTab();
+    firstScroll->setWidget(firstTab);
+
+    tabWidget->addTab(firstScroll, tr("Main"));
     tabWidget->addTab(new MainTab(), tr("Second Tab"));
 
     QAction *newAct = new QAction(tr("&New"), this);

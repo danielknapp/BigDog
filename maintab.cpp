@@ -6,14 +6,20 @@
 
 MainTab::MainTab(QWidget *parent) : QWidget(parent)
 {
-    mainLayout = new QHBoxLayout;
-    mainLayout ->setSizeConstraint(QLayout::SetNoConstraint);
-    setLayout(mainLayout);
+    QHBoxLayout * initialLayout = new QHBoxLayout;
+    initialLayout ->setSizeConstraint(QLayout::SetNoConstraint);
+//    setLayout(initialLayout);
+    mainLayout = initialLayout;
+}
 
+MainTab* MainTab::setupAsFirstTab()
+{
+    this->addColumn("CharType");
+    this->addColumn("CharColor");
+    this->addColumn("ShapeType");
+    this->addColumn("ShapeColor");
 
-    this->addColumn("Char");
-    this->addColumn("Color");
-    this->addColumn("Shape");
+    return this;
 }
 
 void MainTab::addColumn(const char* label) {
@@ -23,5 +29,6 @@ void MainTab::addColumn(const char* label) {
 
     QLabel * newLabel = new QLabel(labelText);
 
-    mainLayout -> insertWidget(0, newLabel);
+//    mainLayout->
+    mainLayout -> addWidget( newLabel);
 }
