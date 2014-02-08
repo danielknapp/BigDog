@@ -2,10 +2,11 @@
 
 #include <QString>
 #include <QLabel>
+#include <QVBoxLayout>
 
 MainTab::MainTab(QWidget *parent) : QWidget(parent)
 {
-    mainLayout = new QVBoxLayout;
+    mainLayout = new QHBoxLayout;
     mainLayout ->setSizeConstraint(QLayout::SetNoConstraint);
     setLayout(mainLayout);
 
@@ -22,5 +23,5 @@ void MainTab::addColumn(const char* label) {
 
     QLabel * newLabel = new QLabel(labelText);
 
-    mainLayout -> insertWidget(newLabel);
+    mainLayout -> insertWidget(0, newLabel);
 }

@@ -10,6 +10,8 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
+    QTabWidget* getTabBar();
+
 
 private:
     QTabWidget *tabWidget;
