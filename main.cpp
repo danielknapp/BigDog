@@ -3,6 +3,12 @@
 #include "viewcontroller.h"
 #include "model.h"
 
+#include <stdio.h>
+#include <iostream>
+#include <stdlib.h>
+#include <errno.h>
+#include <string.h>
+
 #include <Windows.h>
 #include "dirent.h"
 //#include <unistd.h>
@@ -15,6 +21,10 @@
 #include <QWidget>
 #include <QLabel>
 #include <QScrollArea>
+#include <QString>
+#include <QDir>
+#include <QFileInfoList>
+#include <QFileInfo>
 
 
 //void addLabel(QGridLayout *grid, QLabel *label, QScrollArea *scroll)
@@ -53,13 +63,53 @@ int main(int argc, char *argv[])
 
     vc->addRow(lst);
 
+    QDir currDir("C:\\Users\\danny_000\\Downloads\\targets\\targets");
+    QFileInfoList dirList = currDir.entryInfoList();
+    QString ext(".png");
+    int count = 1;
+    for (int i = 0; i < dirList.size(); i++)
+    {
+        QFileInfo file = dirList.at(i);
+        if (!file.isDir())
+        {
+            QString fileName = file.fileName();
+            if (fileName.contains(ext))
+                printf("got %d!\n\n", count++);
+        }
+    }
+    int i = 0;
+
 //    DIR *dir;
 //    struct dirent *ent;
-//    if ((dir = opendir("c:\\src\\")) != NULL)
+////    std::list<QString*> *lst = new std::list<QString*>();
+//    QStringList strLst;
+//    QString ext(".png");
+//    if ((dir = opendir("c:\\Users\\danny_000\\Downloads\\targets\\targets")) != NULL)
 //    {
 //        while ((ent = readdir(dir)) != NULL)
 //        {
 //            printf("%s\n", ent->d_name);
+
+//            // Check if file is a directory
+//            struct stat st;
+//            errno = 0;
+//            unsigned short errCode = stat(ent->d_name, &st);
+//            int erStuff = errno;
+//            if (errno)
+//                perror("errno set");
+
+//            if(S_ISDIR(st.st_mode))
+//            {
+//               continue;
+//            }
+//            else
+//            {
+//                // if it has a .png ending, include it
+//                QString dName(ent->d_name);
+//                if (dName.contains(ext))
+//                    strLst.append(dName);
+//            }
+
 //        }
 //        closedir(dir);
 //    }
@@ -68,6 +118,8 @@ int main(int argc, char *argv[])
 //        perror("");
 //        return EXIT_FAILURE;
 //    }
+
+//    printf("%d\n", strLst.size());
 
 //    MainWindow w;
 
