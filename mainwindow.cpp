@@ -7,21 +7,11 @@
 #include <QToolBar>
 #include <QMenuBar>
 #include <QTabBar>
-#include <QScrollArea>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
+
 {
-    tabWidget = new QTabWidget;
-
-    QScrollArea *firstScroll = new QScrollArea();
-    firstScroll->setBackgroundRole(QPalette::Dark);
-    MainTab * firstTab = (new MainTab())->setupAsFirstTab();
-    firstScroll->setWidget(firstTab);
-
-    tabWidget->addTab(firstScroll, tr("Main"));
-    tabWidget->addTab(new MainTab(), tr("Second Tab"));
-
     QAction *newAct = new QAction(tr("&New"), this);
     newAct->setShortcuts(QKeySequence::New);
     newAct->setStatusTip(tr("Create a new file"));
@@ -40,16 +30,9 @@ MainWindow::MainWindow(QWidget *parent)
     QToolBar *fileToolBar = addToolBar(tr("File"));
     fileToolBar->addAction(newAct);
     fileToolBar->addAction(openAct);
-
-    setCentralWidget(tabWidget);
 }
 
 MainWindow::~MainWindow()
 {
 
-}
-
-QTabWidget* MainWindow::getTabBar()
-{
-    return tabWidget;
 }
