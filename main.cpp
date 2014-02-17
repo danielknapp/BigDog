@@ -40,6 +40,61 @@
 
 class ViewController;
 
+bool addValidImage(QFileInfo &file, ViewController *vc, QString &ext = QString(""));
+
+void recurseDir(QDir &dir, ViewController *vc)
+{
+    QFileInfoList dirList = dir.entryInfoList();
+    QString ext(".png");
+    for (int i = 0; i < dirList.size(); i++)
+    {
+        QFileInfo file = dirList.at(i);
+        QString fName = file.fileName();
+
+        if (file.isDir())
+        {
+            if (fName.compare(".") == 0 || fName.compare("..") == 0)
+                ; // skip
+            else
+                recurseDir(QDir(file.absoluteFilePath()), vc);
+        }
+        else if (!file.isDir())
+        {
+            addValidImage(file, vc, ext);
+        }
+    }
+}
+
+bool addValidImage(QFileInfo &file, ViewController *vc, QString &ext)
+{
+    QString fileName = file.fileName();
+    int count = 1;
+    if (fileName.contains(ext))
+    {
+        printf("got %d!\n%s\n", count++, file.absoluteFilePath().toStdString().c_str());
+        std::list<QLabel*> *lst = new std::list<QLabel*>();
+        QLabel *picLbl = new QLabel();
+        picLbl->setPixmap(QPixmap(file.absoluteFilePath()).scaledToWidth(200));
+        QLabel *charT = new QLabel("CharType");
+        QLabel *charC = new QLabel("CharColor");
+        QLabel *shapeT = new QLabel("ShapeType");
+        QLabel *shapeC = new QLabel("ShapeColor");
+        lst->push_back(picLbl);
+        lst->push_back(charT);
+        lst->push_back(charC);
+        lst->push_back(shapeT);
+        lst->push_back(shapeC);
+
+        vc->addRow(lst);
+
+        delete lst;
+        return true;
+    }
+    else
+        return false;
+}
+
+
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
@@ -49,7 +104,7 @@ int main(int argc, char *argv[])
 
     std::list<QLabel*> *lst = new std::list<QLabel*>();
     QLabel * newLabel = new QLabel();
-    newLabel->setPixmap(QPixmap("C:/Users/danny_000/Downloads/sampletarget.jpg").scaledToWidth(100));
+    newLabel->setPixmap(QPixmap("C:/Users/danny_000/Downloads/sampletarget.jpg").scaledToWidth(200));
     QLabel *charT = new QLabel("CharType");
     QLabel *charC = new QLabel("CharColor");
     QLabel *shapeT = new QLabel("ShapeType");
@@ -64,20 +119,11 @@ int main(int argc, char *argv[])
     vc->addRow(lst);
 
     QDir currDir("C:\\Users\\danny_000\\Downloads\\targets\\targets");
-    QFileInfoList dirList = currDir.entryInfoList();
-    QString ext(".png");
-    int count = 1;
-    for (int i = 0; i < dirList.size(); i++)
-    {
-        QFileInfo file = dirList.at(i);
-        if (!file.isDir())
-        {
-            QString fileName = file.fileName();
-            if (fileName.contains(ext))
-                printf("got %d!\n\n", count++);
-        }
-    }
-    int i = 0;
+//    QFileInfoList dirList = currDir.entryInfoList();
+//    QString ext(".png");
+    recurseDir(currDir, vc);
+
+//    int i = 0;
 
 //    DIR *dir;
 //    struct dirent *ent;
