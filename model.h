@@ -3,6 +3,7 @@
 
 #include "viewcontroller.h"
 class ViewController;
+
 /**
  * This class should contain all the backend stuff for the Big Dog gui.
  * The idea is that this will function as the Model in the MVC pattern

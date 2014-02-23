@@ -14,6 +14,8 @@
 //#include <unistd.h>
 //#include <sys/stat.h>
 //#include <sys/types.h>
+#include <thread>
+#include <signal.h>
 
 #include <sstream>
 #include <QApplication>
@@ -38,7 +40,7 @@
 ////    scroll->show();
 //}
 
-class ViewController;
+//class ViewController;
 
 bool addValidImage(QFileInfo &file, ViewController *vc, QString &ext = QString(""));
 
@@ -94,11 +96,35 @@ bool addValidImage(QFileInfo &file, ViewController *vc, QString &ext)
         return false;
 }
 
+void callFromThread(int i)
+{
+    while (i < 5)
+    {
+        printf("Call number %d\n", i);
+        fflush(stdout);
+        i++;
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+
+    }
+    //std::terminate();
+}
+
+void sigabrt(int i)
+{
+    printf("Abort signaled with %d\n", i);
+    exit(0);
+}
+
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     ViewController *vc = new ViewController();
+
+    void (*sigabrtPtr)(int);
+    sigabrtPtr = signal(SIGABRT, SIG_IGN);
+    std::thread myt(callFromThread, 0);
+    myt.detach();
 
     vc->setUpBigDog();
 
@@ -223,6 +249,7 @@ int main(int argc, char *argv[])
 
 //    w.showMaximized();
 
+//    myt.join();
     return a.exec();
 }
 

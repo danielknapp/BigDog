@@ -36,3 +36,8 @@ MainWindow::~MainWindow()
 {
 
 }
+
+//void MainWindow::closeEvent(QCloseEvent *event)
+//{
+//    exit(0);
+//}
