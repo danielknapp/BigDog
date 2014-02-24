@@ -12,6 +12,9 @@ public:
     ~MainWindow();
 //    void closeEvent(QCloseEvent *event);
 
+public slots:
+    void newFile();
+
 private:
 
 };

@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <string.h>
+#include <set>
 
 #include <Windows.h>
 #include "dirent.h"
@@ -42,112 +43,152 @@
 
 //class ViewController;
 
-bool addValidImage(QFileInfo &file, ViewController *vc, QString &ext = QString(""));
+//bool addValidImage(QFileInfo &file, ViewController *vc, QString &ext = QString(""));
 
-void recurseDir(QDir &dir, ViewController *vc)
+
+//void recurseDir(QDir &dir, ViewController *vc)
+//{
+//    QFileInfoList dirList = dir.entryInfoList();
+//    QString ext(".png");
+//    for (int i = 0; i < dirList.size(); i++)
+//    {
+//        QFileInfo file = dirList.at(i);
+//        QString fName = file.fileName();
+
+//        if (file.isDir())
+//        {
+//            if (fName.compare(".") == 0 || fName.compare("..") == 0)
+//                ; // skip
+//            else
+//                recurseDir(QDir(file.absoluteFilePath()), vc);
+//        }
+//        else if (!file.isDir())
+//        {
+//            addValidImage(file, vc, ext);
+//        }
+//    }
+//}
+
+//void fileChecker(QDir &dir, ViewController *vc)
+//{
+//    while (true)
+//    {
+//        QFileInfoList dirList = dir.entryInfoList();
+//        for (int i = 0; i < dirList.size(); i++)
+//        {
+//            QFileInfo file = dirList.at(i);
+//            QString fName = file.fileName();
+
+//            if (file.isDir())
+//            {
+//                if (fName.compare(".") == 0 || fName.compare("..") == 0)
+//                    ; // skip
+//                else if (targetFolders.find(fName) == targetFolders.end())
+//                {
+//                    targetFolders.insert(fName);
+//                    recurseDir(QDir(file.absoluteFilePath()), vc);
+//                }
+//            }
+//        }
+//    }
+//}
+
+//bool addValidImage(QFileInfo &file, ViewController *vc, QString &ext)
+//{
+//    QString fileName = file.fileName();
+//    int count = 1;
+//    if (fileName.contains(ext))
+//    {
+//        printf("got %d!\n%s\n", count++, file.absoluteFilePath().toStdString().c_str());
+//        std::list<QLabel*> *lst = new std::list<QLabel*>();
+//        QLabel *picLbl = new QLabel();
+//        picLbl->setPixmap(QPixmap(file.absoluteFilePath()).scaledToWidth(200));
+//        QLabel *charT = new QLabel("CharType");
+//        QLabel *charC = new QLabel("CharColor");
+//        QLabel *shapeT = new QLabel("ShapeType");
+//        QLabel *shapeC = new QLabel("ShapeColor");
+//        lst->push_back(picLbl);
+//        lst->push_back(charT);
+//        lst->push_back(charC);
+//        lst->push_back(shapeT);
+//        lst->push_back(shapeC);
+
+//        vc->addRow(lst);
+
+//        delete lst;
+//        return true;
+//    }
+//    else
+//        return false;
+//}
+
+void callFromThread(Model *mod, QDir &dir, ViewController *vc)
 {
-    QFileInfoList dirList = dir.entryInfoList();
-    QString ext(".png");
-    for (int i = 0; i < dirList.size(); i++)
-    {
-        QFileInfo file = dirList.at(i);
-        QString fName = file.fileName();
-
-        if (file.isDir())
-        {
-            if (fName.compare(".") == 0 || fName.compare("..") == 0)
-                ; // skip
-            else
-                recurseDir(QDir(file.absoluteFilePath()), vc);
-        }
-        else if (!file.isDir())
-        {
-            addValidImage(file, vc, ext);
-        }
-    }
-}
-
-bool addValidImage(QFileInfo &file, ViewController *vc, QString &ext)
-{
-    QString fileName = file.fileName();
-    int count = 1;
-    if (fileName.contains(ext))
-    {
-        printf("got %d!\n%s\n", count++, file.absoluteFilePath().toStdString().c_str());
-        std::list<QLabel*> *lst = new std::list<QLabel*>();
-        QLabel *picLbl = new QLabel();
-        picLbl->setPixmap(QPixmap(file.absoluteFilePath()).scaledToWidth(200));
-        QLabel *charT = new QLabel("CharType");
-        QLabel *charC = new QLabel("CharColor");
-        QLabel *shapeT = new QLabel("ShapeType");
-        QLabel *shapeC = new QLabel("ShapeColor");
-        lst->push_back(picLbl);
-        lst->push_back(charT);
-        lst->push_back(charC);
-        lst->push_back(shapeT);
-        lst->push_back(shapeC);
-
-        vc->addRow(lst);
-
-        delete lst;
-        return true;
-    }
-    else
-        return false;
-}
-
-void callFromThread(int i)
-{
-    while (i < 5)
+    int i = 0;
+    while (true)
     {
         printf("Call number %d\n", i);
         fflush(stdout);
         i++;
-        std::this_thread::sleep_for(std::chrono::seconds(1));
+        mod->fileChecker(dir, vc);
+        std::this_thread::sleep_for(std::chrono::milliseconds(2000));
 
     }
     //std::terminate();
 }
 
-void sigabrt(int i)
-{
-    printf("Abort signaled with %d\n", i);
-    exit(0);
-}
+//void sigabrt(int i)
+//{
+//    printf("Abort signaled with %d\n", i);
+//    exit(0);
+//}
 
 
 int main(int argc, char *argv[])
 {
+    qRegisterMetaType<QFileInfo>("QFileInfo");
+
     QApplication a(argc, argv);
     ViewController *vc = new ViewController();
 
-    void (*sigabrtPtr)(int);
-    sigabrtPtr = signal(SIGABRT, SIG_IGN);
-    std::thread myt(callFromThread, 0);
-    myt.detach();
+//    void (*sigabrtPtr)(int);
+//    sigabrtPtr = signal(SIGABRT, SIG_IGN);
+//    std::thread myt(callFromThread, 0);
+//    myt.detach();
 
     vc->setUpBigDog();
+    vc->setModel(new Model());
 
-    std::list<QLabel*> *lst = new std::list<QLabel*>();
-    QLabel * newLabel = new QLabel();
-    newLabel->setPixmap(QPixmap("C:/Users/danny_000/Downloads/sampletarget.jpg").scaledToWidth(200));
-    QLabel *charT = new QLabel("CharType");
-    QLabel *charC = new QLabel("CharColor");
-    QLabel *shapeT = new QLabel("ShapeType");
-    QLabel *shapeC = new QLabel("ShapeColor");
+    Model *currMod = vc->getModel();
+    QObject::connect(currMod, SIGNAL(imageFound(QFileInfo , ViewController *, QString )),
+                     currMod, SLOT(addImage(QFileInfo , ViewController *, QString )));
 
-    lst->push_back(newLabel);
-    lst->push_back(charT);
-    lst->push_back(charC);
-    lst->push_back(shapeT);
-    lst->push_back(shapeC);
+//    std::list<QLabel*> *lst = new std::list<QLabel*>();
+//    QLabel * newLabel = new QLabel();
+//    newLabel->setPixmap(QPixmap("C:/Users/danny_000/Downloads/sampletarget.jpg").scaledToWidth(200));
+//    QLabel *charT = new QLabel("CharType");
+//    QLabel *charC = new QLabel("CharColor");
+//    QLabel *shapeT = new QLabel("ShapeType");
+//    QLabel *shapeC = new QLabel("ShapeColor");
 
-    vc->addRow(lst);
+//    lst->push_back(newLabel);
+//    lst->push_back(charT);
+//    lst->push_back(charC);
+//    lst->push_back(shapeT);
+//    lst->push_back(shapeC);
+
+//    vc->addRow(lst);
 
     QDir currDir("C:\\Users\\danny_000\\Downloads\\targets\\targets");
+    std::thread myt(callFromThread, currMod, currDir, vc);
+    myt.detach();
+
+//    currMod->fileChecker(currDir, vc);
 //    QFileInfoList dirList = currDir.entryInfoList();
 //    QString ext(".png");
-    recurseDir(currDir, vc);
+//    std::thread myt2(fileChecker, currDir, vc);
+//    myt2.detach();
+//    recurseDir(currDir, vc);
 
 //    int i = 0;
 

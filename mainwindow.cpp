@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "maintab.h"
+#include "model.h"
 
 #include <QVBoxLayout>
 #include <QAction>
@@ -20,7 +21,8 @@ MainWindow::MainWindow(QWidget *parent)
     QAction *openAct = new QAction(tr("&Open..."), this);
     openAct->setShortcuts(QKeySequence::Open);
     openAct->setStatusTip(tr("Open an existing file"));
-    connect(openAct, SIGNAL(triggered()), this, SLOT(open()));
+    Model *myMod = new Model();
+    connect(openAct, SIGNAL(triggered()), myMod, SLOT(open()));
 
     QMenu *fileMenu = menuBar()->addMenu(tr("&File"));
     fileMenu->addAction(newAct);
@@ -35,6 +37,12 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow()
 {
 
+}
+
+void MainWindow::newFile()
+{
+    printf("newFile called!\n");
+    fflush(stdout);
 }
 
 //void MainWindow::closeEvent(QCloseEvent *event)
