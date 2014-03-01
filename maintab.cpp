@@ -11,6 +11,13 @@ MainTab::MainTab(QWidget *parent)
     mainLayout->setVerticalSpacing(20);
 }
 
+/**
+ * @brief MainTab::setupAsFirstTab
+ *      Sets up specifically how we would want the first
+ *      tab of BigDog to look
+ * @return
+ *      A pointer to itself
+ */
 MainTab* MainTab::setupAsFirstTab()
 {
     this->addColumn("Targets", 0);
@@ -22,34 +29,45 @@ MainTab* MainTab::setupAsFirstTab()
     return this;
 }
 
+/**
+ * @brief MainTab::addColumn
+ *      Adds a column to mainLayout using a QLabel
+ * @param label
+ *      The string to be displayed in QLabel
+ */
 void MainTab::addColumn(const char* label)
 {
-//    QString labelText = "<b>";
-//    labelText.append(label);
-//    labelText.append("</b>");
-
     QLabel * newLabel = new QLabel(label);
 
     int cols = mainLayout->columnCount();
-    if (cols < 0)
-        cols = 1;
+//    if (cols < 0)
+//        cols = 1;
     mainLayout -> addWidget(newLabel, 0, cols);
 }
 
+/**
+ * @brief MainTab::addColumn
+ *      Adds a column to mainLayout using a QLabel
+ *      to a specific column
+ * @param label
+ *      The string to be displayed in QLabel
+ * @param col
+ *      The column to add the QLabel to
+ */
 void MainTab::addColumn(const char* label, int col)
 {
-//    QString labelText = "<b>";
-//    labelText.append(label);
-//    labelText.append("</b>");
-
     QLabel * newLabel = new QLabel(label);
 
-//    int cols = mainLayout->columnCount();
-//    if (cols < 0)
-//        cols = 1;
     mainLayout -> addWidget(newLabel, 0, col);
 }
 
+/**
+ * @brief MainTab::addRow
+ *      Adds a row to mainLayout using the given
+ *      list of QLabels
+ * @param labels
+ *      The list of QLabels to go into the row
+ */
 void MainTab::addRow(std::list<QLabel*> *labels)
 {
     int rows = mainLayout->rowCount();
@@ -64,12 +82,27 @@ void MainTab::addRow(std::list<QLabel*> *labels)
     }
 }
 
-void MainTab::mousePressEvent(QMouseEvent *event)
+
+ViewController* MainTab::getViewController()
 {
-    QWidget::mousePressEvent(event);
-    if (event->button() == Qt::LeftButton)
-    {
-        printf("Clicked!\n");
-    }
+    return vc;
 }
+
+
+void MainTab::setViewController(ViewController* vc)
+{
+    this->vc = vc;
+}
+
+
+
+
+//void MainTab::mousePressEvent(QMouseEvent *event)
+//{
+//    QWidget::mousePressEvent(event);
+//    if (event->button() == Qt::LeftButton)
+//    {
+//        printf("Clicked!\n");
+//    }
+//}
 

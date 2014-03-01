@@ -22,12 +22,19 @@ ViewController::~ViewController()
     delete listScrollTabs;
 }
 
+/**
+ * @brief ViewController::setUpBigDog
+ *      Set up a MainWindow to display everything on and create
+ *      the necessary QTabWidget to hold the tabs to be displayed
+ *      on Big Dog.
+ */
 void ViewController::setUpBigDog()
 {
     mainWin = new MainWindow();
     listScrollTabs = new std::list<QScrollArea*>();
     tabWidget = new QTabWidget(mainWin);
 
+    // Sets up the first tab to be scrollable
     QScrollArea *firstScroll = new QScrollArea();
     listScrollTabs->push_back(firstScroll);
     firstScroll->setBackgroundRole(QPalette::Dark);
@@ -37,6 +44,7 @@ void ViewController::setUpBigDog()
     firstScroll->setWidget(firstTab);
     tabWidget->addTab(firstScroll, QWidget::tr("Main"));
 
+    // Sets up the second tab to be scrollable
     QScrollArea *secondScroll = new QScrollArea();
     listScrollTabs->push_back(secondScroll);
     secondScroll->setBackgroundRole(QPalette::Light);
@@ -45,6 +53,7 @@ void ViewController::setUpBigDog()
     secondScroll->setWidget(secondTab);
     tabWidget->addTab(secondScroll, QWidget::tr("Second Tab"));
 
+    // Display tabWidget on the MainWindow
     mainWin->setCentralWidget(tabWidget);
 
     mainWin->showMaximized();
@@ -70,6 +79,12 @@ Model* ViewController::getModel()
     return model;
 }
 
+/**
+ * @brief ViewController::addRow
+ *      Delegate the addition of the row to the view.
+ * @param lst
+ *      Pass the list of QLabels to the view.
+ */
 void ViewController::addRow(std::list<QLabel*> *lst)
 {
     if (!view)

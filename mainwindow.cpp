@@ -9,9 +9,25 @@
 #include <QMenuBar>
 #include <QTabBar>
 
+
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 
+{
+    setupAsMainWindow();
+}
+
+MainWindow::~MainWindow()
+{
+
+}
+
+/**
+ * @brief MainWindow::setupAsMainWindow
+ *      Creates clickable actions added to a menu and toolbar
+ */
+void MainWindow::setupAsMainWindow()
 {
     QAction *newAct = new QAction(tr("&New"), this);
     newAct->setShortcuts(QKeySequence::New);
@@ -21,8 +37,8 @@ MainWindow::MainWindow(QWidget *parent)
     QAction *openAct = new QAction(tr("&Open..."), this);
     openAct->setShortcuts(QKeySequence::Open);
     openAct->setStatusTip(tr("Open an existing file"));
-    Model *myMod = new Model();
-    connect(openAct, SIGNAL(triggered()), myMod, SLOT(open()));
+//    Model *myMod = new Model();
+    connect(openAct, SIGNAL(triggered()), this, SLOT(open()));
 
     QMenu *fileMenu = menuBar()->addMenu(tr("&File"));
     fileMenu->addAction(newAct);
@@ -34,14 +50,23 @@ MainWindow::MainWindow(QWidget *parent)
     fileToolBar->addAction(openAct);
 }
 
-MainWindow::~MainWindow()
-{
-
-}
-
+/**
+ * @brief MainWindow::newFile
+ *      Slot method to be triggered by a signal.
+ */
 void MainWindow::newFile()
 {
     printf("newFile called!\n");
+    fflush(stdout);
+}
+
+/**
+ * @brief MainWindow::open
+ *      Slot method to be triggered by a signal.
+ */
+void MainWindow::open()
+{
+    printf("open called!\n");
     fflush(stdout);
 }
 
