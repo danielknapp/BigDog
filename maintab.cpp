@@ -25,6 +25,8 @@ MainTab* MainTab::setupAsFirstTab()
     this->addColumn("CharColor");
     this->addColumn("ShapeType");
     this->addColumn("ShapeColor");
+    this->addColumn("Latitude");
+    this->addColumn("Longitude");
 
     return this;
 }
@@ -37,12 +39,8 @@ MainTab* MainTab::setupAsFirstTab()
  */
 void MainTab::addColumn(const char* label)
 {
-    QLabel * newLabel = new QLabel(label);
-
     int cols = mainLayout->columnCount();
-//    if (cols < 0)
-//        cols = 1;
-    mainLayout -> addWidget(newLabel, 0, cols);
+    addColumn(label, cols);
 }
 
 /**
@@ -57,6 +55,8 @@ void MainTab::addColumn(const char* label)
 void MainTab::addColumn(const char* label, int col)
 {
     QLabel * newLabel = new QLabel(label);
+    QFont f( "Arial", 20, QFont::Bold);
+    newLabel->setFont( f);
 
     mainLayout -> addWidget(newLabel, 0, col);
 }

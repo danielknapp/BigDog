@@ -53,6 +53,7 @@ void MainWindow::setupAsMainWindow()
 /**
  * @brief MainWindow::newFile
  *      Slot method to be triggered by a signal.
+ *      (not currently useful).
  */
 void MainWindow::newFile()
 {
@@ -63,6 +64,7 @@ void MainWindow::newFile()
 /**
  * @brief MainWindow::open
  *      Slot method to be triggered by a signal.
+ *      (not currently useful).
  */
 void MainWindow::open()
 {

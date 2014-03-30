@@ -1,12 +1,15 @@
 #include "model.h"
 
 #include <QFileInfoList>
+#include <QFile>
+#include <QTextStream>
+#include <QFont>
 #include <thread>
 
 
 Model::Model() :
     vc(0)
-//    targetFolders(new std::set<QString>())
+//    targetFiles(new std::set<QString>())
 {
 }
 
@@ -66,14 +69,52 @@ bool Model::addValidImage(QFileInfo &file, ViewController *vc, QString &ext)
     {
         printf("got %d!\n%s\n", count++, file.absoluteFilePath().toStdString().c_str());
 
+        QString infoFileStr = file.absoluteFilePath();
+        infoFileStr = infoFileStr.remove(infoFileStr.size()-3,3).append("info");
+        QFile infoFile(infoFileStr);
+
+        QLabel *charT;
+        QLabel *charC;
+        QLabel *shapeT;
+        QLabel *shapeC;
+        QLabel** properties[] = {&charT, &charC, &shapeT, &shapeC};
+
+        if (!infoFile.open(QIODevice::ReadOnly))
+        {
+            printf("Problems finding file with name %s\n", infoFileStr.toStdString().c_str());
+            charT = new QLabel("CharType");
+            charC = new QLabel("CharColor");
+            shapeT = new QLabel("ShapeType");
+            shapeC = new QLabel("ShapeColor");
+        }
+        else
+        {
+            QTextStream infoFileStream(&infoFile);
+
+            int i = 0;
+            while (!infoFileStream.atEnd())
+            {
+                QString line = infoFileStream.readLine();
+                if (line.isEmpty())
+                    continue;
+                QLabel *temp = new QLabel(line);
+                QFont f( "Arial", 20, QFont::Bold);
+                temp->setFont( f);
+                *(properties[i++]) = temp;
+            }
+        }
+//        printf("size of properties: %d\n", sizeof(properties));
+
+        infoFile.close();
+
         // prep for addition to the gui through vc
         std::list<QLabel*> *lst = new std::list<QLabel*>();
         QLabel *picLbl = new QLabel();
-        picLbl->setPixmap(QPixmap(file.absoluteFilePath()).scaledToWidth(200));
-        QLabel *charT = new QLabel("CharType");
-        QLabel *charC = new QLabel("CharColor");
-        QLabel *shapeT = new QLabel("ShapeType");
-        QLabel *shapeC = new QLabel("ShapeColor");
+        picLbl->setPixmap(QPixmap(file.absoluteFilePath()).scaledToWidth(150));
+//        QLabel *charT = new QLabel("CharType");
+//        QLabel *charC = new QLabel("CharColor");
+//        QLabel *shapeT = new QLabel("ShapeType");
+//        QLabel *shapeC = new QLabel("ShapeColor");
         lst->push_back(picLbl);
         lst->push_back(charT);
         lst->push_back(charC);
@@ -108,9 +149,9 @@ bool Model::addValidImage(QFileInfo &file, ViewController *vc, QString &ext)
 //        }
 //        else if (!file.isDir())
 //        {
-//            if (targetFolders.find(file.absoluteFilePath()) == targetFolders.end())
+//            if (targetFiles.find(file.absoluteFilePath()) == targetFiles.end())
 //            {
-//                targetFolders.insert(file.absoluteFilePath());
+//                targetFiles.insert(file.absoluteFilePath());
 ////                printf("emitting now\n");
 ////                fflush(stdout);
 //                emit imageFound(file, vc, ext);
@@ -149,11 +190,11 @@ void Model::fileChecker(QDir &dir, ViewController *vc)
         }
         else if (!file.isDir())
         {
-            if (targetFolders.find(file.absoluteFilePath()) == targetFolders.end())
+            if (targetFiles.find(file.absoluteFilePath()) == targetFiles.end())
             {
-                // Use targetFolders to add only .png files that are new visited
+                // Use targetFiles to add only .png files that are new visited
                 // absolute paths.
-                targetFolders.insert(file.absoluteFilePath());
+                targetFiles.insert(file.absoluteFilePath());
 
 //                printf("emitting now\n");
 //                fflush(stdout);

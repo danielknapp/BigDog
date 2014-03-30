@@ -79,7 +79,7 @@ public slots:
 
 private:
     ViewController *vc;
-    std::set<QString> targetFolders;
+    std::set<QString> targetFiles;
 };
 
 #endif // MODEL_H
