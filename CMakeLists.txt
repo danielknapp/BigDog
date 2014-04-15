@@ -24,7 +24,7 @@ set(CMAKE_AUTOMOC ON)
 find_package(Qt5Widgets)
 
 # Tell CMake to create the helloworld executable
-add_executable(BigDog WIN32 main.cpp)
+add_executable(BigDog WIN32 main.cpp maintab.cpp mainwindow.cpp model.cpp viewcontroller.cpp)
 
 # Use the Widgets module from Qt 5.
 target_link_libraries(BigDog Qt5::Widgets)

@@ -29,7 +29,7 @@
  * @param vc
  *      The ViewController needed as input after finding an image
  */
-void rFindImages(Model *mod, QDir &dir, ViewController *vc)
+void rFindImages(Model *mod, QDir dir, ViewController *vc)
 {
     int i = 0;
     while (true)

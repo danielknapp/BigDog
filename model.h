@@ -38,7 +38,7 @@ public:
      *      ViewController object to pass to the emitted signal
      *      for adding the image to the gui.
      */
-    void fileChecker(QDir &dir, ViewController *vc);
+    void fileChecker(QDir dir, ViewController *vc);
 
     /**
      * @brief Model::addValidImage
@@ -54,7 +54,7 @@ public:
      * @return
      *      A boolean value representing whether the image was actually added or not
      */
-    bool addValidImage(QFileInfo &file, ViewController *vc, QString &ext = QString(""));
+    bool addValidImage(QFileInfo &file, ViewController *vc, QString ext = QString(""));
 
 signals:
 

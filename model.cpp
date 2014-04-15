@@ -61,7 +61,7 @@ void Model::addImage(QFileInfo file, ViewController *vc, QString ext)
  * @return
  *      A boolean value representing whether the image was actually added or not
  */
-bool Model::addValidImage(QFileInfo &file, ViewController *vc, QString &ext)
+bool Model::addValidImage(QFileInfo &file, ViewController *vc, QString ext)
 {
     QString fileName = file.fileName();
     int count = 1;
@@ -170,7 +170,7 @@ bool Model::addValidImage(QFileInfo &file, ViewController *vc, QString &ext)
  *      ViewController object to pass to the emitted signal
  *      for adding the image to the gui.
  */
-void Model::fileChecker(QDir &dir, ViewController *vc)
+void Model::fileChecker(QDir dir, ViewController *vc)
 {
 //    recurseDir(dir, vc);
     dir.refresh();
