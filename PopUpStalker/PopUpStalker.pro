@@ -13,6 +13,14 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    maintab.cpp \
+    model.cpp \
+    util.cpp \
+    viewcontroller.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+    maintab.h \
+    model.h \
+    util.h \
+    viewcontroller.h

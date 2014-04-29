@@ -53,8 +53,6 @@ public slots:
 
 private:
     bool imageConfirmed;
-    std::set<QString>::iterator start;
-    std::set<QString>::iterator end;
 //    Q_DISABLE_COPY(TargetRec)
 //    QLabel *picLabel;
 

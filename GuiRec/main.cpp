@@ -29,11 +29,35 @@
 
 
 QPixmap *myPix;
+TargetRec *myTarRec;
 
 
 void doRec(QDir dir, QLabel *lbl, TargetRec *tRec)
 {
     tRec->recurseTargets(dir, lbl);
+}
+
+std::list<QLineEdit*> * textBoxes;
+
+void writeData()
+{
+    QFile file("./out.txt");
+    file.open(QIODevice::WriteOnly | QIODevice::Text);
+    QTextStream out(&file);
+
+    // Go through the list of QLineEdit boxes and print each to a line in the output file
+    for (std::list<QLineEdit*>::iterator start = textBoxes->begin(); start != textBoxes->end(); start++)
+    {
+        QLineEdit *text = *start;
+        // QString textVal = text->text();
+        out<< text->text() << "\n";
+    }
+
+    if (myTarRec != 0)
+        myTarRec->infoConfirmed(new QLabel(), "");
+
+    // optional, as QFile destructor will already do it:
+    file.close();
 }
 
 
@@ -96,7 +120,7 @@ int run(int argc, char*argv[]){
 
     // The target image displayed
     QLabel i_label("Start", &Main_Window);
-    i_label.setPixmap(QPixmap("C:/Users/danny_000/Downloads/sampletarget.jpg").scaledToHeight(675));
+//    i_label.setPixmap(QPixmap("C:/Users/danny_000/Downloads/sampletarget.jpg").scaledToHeight(675));
     hbl->addWidget(&i_label);
 
     // Holds the labels and lineEdit widgets vertically
@@ -147,12 +171,19 @@ int run(int argc, char*argv[]){
     //QWidget confirmAndNegative(&Main_Window);
     QHBoxLayout *hblConfNeg = new QHBoxLayout();
     GuiButton confirm("Confirm");
+    textBoxes = new std::list<QLineEdit*>();
+    confirm.setFunptr(&writeData);
 
     // Add the fields GuiButton will have to write to a file when clicked
     confirm.addQLineEdit(&charType);
     confirm.addQLineEdit(&charColor);
     confirm.addQLineEdit(&shapeType);
     confirm.addQLineEdit(&shapeColor);
+    textBoxes->push_back(&charType);
+    textBoxes->push_back(&charColor);
+    textBoxes->push_back(&shapeType);
+    textBoxes->push_back(&shapeColor);
+
 
     hblConfNeg->addWidget(&confirm);
     GuiButton negative("Negative");
@@ -165,7 +196,7 @@ int run(int argc, char*argv[]){
     // Maximize the main window
     Main_Window.showMaximized();
 
-    TargetRec *myTarRec = new TargetRec();
+    myTarRec = new TargetRec();
     QObject::connect(myTarRec, SIGNAL(infoConfirmed(QLabel *, QString)), myTarRec, SLOT(nextImage(QLabel *, QString)));
     std::thread myt(doRec, QDir("C:/Users/danny_000/Downloads/targets/targets"), &i_label, myTarRec);
     myt.detach();

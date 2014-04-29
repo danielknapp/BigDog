@@ -1,5 +1,20 @@
 #include "mainwindow.h"
+#include "maintab.h"
+#include "viewcontroller.h"
+#include "model.h"
+
+#include <thread>
+#include <signal.h>
+
 #include <QApplication>
+#include <QTableWidget>
+#include <QWidget>
+#include <QLabel>
+#include <QScrollArea>
+#include <QString>
+#include <QDir>
+#include <QFileInfoList>
+#include <QFileInfo>
 
 
 /**
@@ -44,7 +59,7 @@ int main(int argc, char *argv[])
     // Initial setup stuff for ViewController so that it will
     // be ready for looking like the gui we want that can just
     // have rows added to it
-    vc->setUpBigDog();
+    vc->setUpStalker();
     vc->setModel(new Model());
 
     // Connect signals and slots so that when an image is found
@@ -61,12 +76,16 @@ int main(int argc, char *argv[])
     myt.detach();
 
     return a.exec();
-
-
-
-    QApplication a(argc, argv);
-    MainWindow w;
-    w.show();
-
-    return a.exec();
 }
+
+
+//void sigabrt(int i)
+//{
+//    printf("Abort signaled with %d\n", i);
+//    exit(0);
+//}
+
+//    void (*sigabrtPtr)(int);
+//    sigabrtPtr = signal(SIGABRT, SIG_IGN);
+//    std::thread myt(callFromThread, 0);
+//    myt.detach();

@@ -104,20 +104,20 @@ void TargetRec::recurseTargets(QDir &dir, QLabel *lbl)
 {
     std::set<QString> *targetFolders = new std::set<QString>();
     recurseDir(dir, targetFolders);
-    start = targetFolders->begin();
-    end = targetFolders->end();
+    std::set<QString>::iterator start = targetFolders->begin();
+    std::set<QString>::iterator end = targetFolders->end();
 
     lbl->setPixmap(QPixmap(*start++).scaledToHeight(600));
-//    while (start != end)
-//    {
-//        while (!imageConfirmed)
-//        {
-//            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-//        }
+    while (start != end)
+    {
+        while (!imageConfirmed)
+        {
+            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+        }
 
-//        lbl->setPixmap(QPixmap(*start++).scaledToHeight(600));
-//        imageConfirmed = false;
-//    }
+        lbl->setPixmap(QPixmap(*start++).scaledToHeight(600));
+        imageConfirmed = false;
+    }
 
 }
 
@@ -126,20 +126,8 @@ void TargetRec::recurseTargets(QDir &dir, QLabel *lbl)
 
 void TargetRec::nextImage(QLabel *lbl, QString fileStr)
 {
-//    imageConfirmed = true;
+    imageConfirmed = true;
     printf("nextImage called!\n");
-    fflush(stdout);
-
-    if (start == end)
-    {
-        recurseTargets(QDir(fileStr), lbl);
-    }
-    else
-    {
-        lbl->setPixmap(QPixmap(*start++).scaledToHeight(600));
-    }
-
-
 }
 
 //    QLabel *picLabel;
