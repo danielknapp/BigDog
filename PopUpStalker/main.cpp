@@ -5,6 +5,7 @@
 
 #include <thread>
 #include <signal.h>
+#include <iostream>
 
 #include <QApplication>
 #include <QTableWidget>
@@ -36,6 +37,7 @@ void rFindImages(Model *mod, QDir dir, ViewController *vc)
     {
         printf("Call number %d\n", i);
         fflush(stdout);
+//        std::this_thread::sleep_for(std::chrono::milliseconds(15000));
         i++;
         mod->fileChecker(dir, vc);
         std::this_thread::sleep_for(std::chrono::milliseconds(2000));
@@ -70,10 +72,25 @@ int main(int argc, char *argv[])
     QObject::connect(currMod, SIGNAL(imageFound(QFileInfo , ViewController *, QString )),
                      currMod, SLOT(addImage(QFileInfo , ViewController *, QString )));
 
+    QObject::connect(currMod, SIGNAL(queueAdd(QString)),
+                     currMod, SLOT(addToNextQ(QString)));
+
     // Setup for recursively finding images on a separate thread
     QDir currDir("C:\\Users\\danny_000\\Downloads\\targets");
     std::thread myt(rFindImages, currMod, currDir, vc);
     myt.detach();
+
+
+    // for creating the latest picture seen file
+    time_t t = time(0);   // get time now
+    struct tm * now = localtime( & t );
+
+    char buf[256];
+    int n = sprintf( buf, "picTrack%d-%d-%d-%d-%d-%d",
+            now->tm_year + 1900, now->tm_mon + 1,
+            now->tm_mday, now->tm_hour,
+            now->tm_min, now->tm_sec);
+    if (n != 0) std::cout << buf << std::endl;
 
     return a.exec();
 }

@@ -92,3 +92,23 @@ void ViewController::addRow(std::list<QLabel*> *lst)
     view->addRow(lst);
 }
 
+void ViewController::setNames(std::list<QLabel*> *labels)
+{
+    view->setNames(labels);
+}
+
+void ViewController::setLats(std::list<QLabel*> *labels)
+{
+    view->setLats(labels);
+}
+
+void ViewController::setLongs(std::list<QLabel*> *labels)
+{
+    view->setLongs(labels);
+}
+
+void ViewController::setImgs(std::list<QLabel*> *labels)
+{
+    view->setImgs(labels);
+}
+

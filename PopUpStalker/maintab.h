@@ -2,6 +2,7 @@
 #define MAINTAB_H
 
 #include "viewcontroller.h"
+#include "util.h"
 #include <QWidget>
 #include <QGridLayout>
 #include <QMouseEvent>
@@ -47,6 +48,20 @@ public:
      *      The list of QLabels to go into the row
      */
     void addRow(std::list<QLabel*> *labels);
+
+    void setRowInfo(std::list<QLabel*> *labels, int row);
+
+    void setNames(std::list<QLabel*> *labels);
+
+    void setLats(std::list<QLabel*> *labels);
+
+    void setLongs(std::list<QLabel*> *labels);
+
+    void setImgs(std::list<QLabel*> *labels);
+
+    void setStalkerLabels(std::vector<StalkerLabels*> *labels);
+
+
 
     /**
      * @brief MainTab::setupAsFirstTab

@@ -47,6 +47,15 @@ public:
      */
     void addRow(std::list<QLabel*> *lst);
 
+    void setNames(std::list<QLabel*> *labels);
+
+    void setLats(std::list<QLabel*> *labels);
+
+    void setLongs(std::list<QLabel*> *labels);
+
+    void setImgs(std::list<QLabel*> *labels);
+
+
 private:
     MainTab *view;
     Model *model;

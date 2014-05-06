@@ -6,9 +6,21 @@
 #include <QFont>
 #include <thread>
 
+std::mutex *myMutex = new std::mutex();
 
 Model::Model() :
-    vc(0)
+    vc(0),
+    prev(0),
+//    nextQLock(new std::unique_lock<std::mutex>(*myMutex)),
+    qFull(new std::condition_variable()),
+    qSize(new std::condition_variable()),
+    curr(new std::vector<StalkerLabels*>()),
+    nextQ(new std::vector<StalkerLabels*>()),
+    prev1(new std::vector<StalkerLabels*>()),
+    prev2(new std::vector<StalkerLabels*>()),
+    prev3(new std::vector<StalkerLabels*>()),
+    prev4(new std::vector<StalkerLabels*>()),
+    prev5(new std::vector<StalkerLabels*>())
 //    targetFiles(new std::set<QString>())
 {
 }
@@ -77,7 +89,10 @@ bool Model::addValidImage(QFileInfo &file, ViewController *vc, QString ext)
         QLabel *charC;
         QLabel *shapeT;
         QLabel *shapeC;
-        QLabel** properties[] = {&charT, &charC, &shapeT, &shapeC};
+        QLabel *lat;
+        QLabel *lon;
+        QLabel** properties[] = {&charT, &charC, &shapeT,
+                                 &shapeC, &lat, &lon};
 
         if (!infoFile.open(QIODevice::ReadOnly))
         {
@@ -86,6 +101,8 @@ bool Model::addValidImage(QFileInfo &file, ViewController *vc, QString ext)
             charC = new QLabel("CharColor");
             shapeT = new QLabel("ShapeType");
             shapeC = new QLabel("ShapeColor");
+            lat = new QLabel("Latitude");
+            lon = new QLabel("Longitude");
         }
         else
         {
@@ -120,6 +137,8 @@ bool Model::addValidImage(QFileInfo &file, ViewController *vc, QString ext)
         lst->push_back(charC);
         lst->push_back(shapeT);
         lst->push_back(shapeC);
+        lst->push_back(lat);
+        lst->push_back(lon);
 
         vc->addRow(lst);
 
@@ -128,6 +147,100 @@ bool Model::addValidImage(QFileInfo &file, ViewController *vc, QString ext)
     }
     else
         return false;
+}
+
+void Model::nextClicked()
+{
+    std::vector<StalkerLabels*> *tmp = 0;
+    switch(prev) {
+        case 1:
+            tmp = curr;
+            break;
+        case 2:
+            tmp = prev1;
+            break;
+        case 3:
+            tmp = prev2;
+            break;
+        case 4:
+            tmp = prev3;
+            break;
+        case 5:
+            tmp = prev4;
+            break;
+    }
+
+    if (tmp != 0)
+    {
+        prev--;
+    }
+    else
+    {
+        tmp = new std::vector<StalkerLabels*>();
+        int i = 0;
+        // **Note: There may be a data race here which
+        // may need to be synchronized
+        while (i < 5)
+        {
+            if (!nextQ->empty())
+            {
+                StalkerLabels *lbls = nextQ->front();
+                tmp->push_back(lbls);
+                nextQ->erase(nextQ->begin());
+            }
+            else
+            {
+                tmp->push_back(new StalkerLabels());
+            }
+            i++;
+        }
+
+        prev5->clear();
+        prev5 = prev4;
+        prev4 = prev3;
+        prev3 = prev2;
+        prev2 = prev1;
+        prev1 = curr;
+        curr = tmp;
+    }
+
+    getViewController()->getView()->setStalkerLabels(tmp); // Update the view
+
+}
+
+void Model::prevClicked()
+{
+    std::vector<StalkerLabels*> *tmp = 0;
+    switch(prev) {
+        case 0:
+            if (prev1->size() != 0)
+                tmp = prev1;
+            break;
+        case 1:
+            if (prev2->size() != 0)
+                tmp = prev2;
+            break;
+        case 2:
+            if (prev3->size() != 0)
+                tmp = prev3;
+            break;
+        case 3:
+            if (prev4->size() != 0)
+                tmp = prev4;
+            break;
+        case 4:
+            if (prev5->size() != 0)
+                tmp = prev5;
+            break;
+        default:
+            break;
+    }
+
+    if (tmp != 0)
+    {
+        prev++;
+        getViewController()->getView()->setStalkerLabels(tmp); // Update the view
+    }
 }
 
 //void Model::recurseDir(QDir &dir, ViewController *vc)
@@ -160,6 +273,52 @@ bool Model::addValidImage(QFileInfo &file, ViewController *vc, QString ext)
 //    }
 //}
 
+void Model::addToNextQ(QString fp)
+{
+    QString infoFileStr = fp;
+    infoFileStr = infoFileStr.remove(infoFileStr.size()-3,3).append("info");
+    QFile infoFile(infoFileStr);
+    QString attribs[3] = {0,0,0};
+
+    if (!infoFile.open(QIODevice::ReadOnly))
+    {
+        printf("Problems finding file with name %s\n", infoFileStr.toStdString().c_str());
+
+        return;
+    }
+    else
+    {
+        QTextStream infoFileStream(&infoFile);
+
+        int i = 0;
+        while (!infoFileStream.atEnd() && i < 3)
+        {
+            QString line = infoFileStream.readLine();
+            if (line.isEmpty())
+                continue;
+            attribs[i] = line;
+            i++;
+        }
+    }
+
+    infoFile.close();
+
+    StalkerLabels *lbls = new StalkerLabels(
+                attribs[0], attribs[1], attribs[2], fp);
+
+//    nextQLock->lock();
+    std::unique_lock<std::mutex> localLock(*myMutex);
+
+    nextQ->push_back(lbls);
+
+    qSize->notify_all();
+
+//    nextQLock->unlock();
+//    myMutex->unlock();
+
+}
+
+
 /**
  * @brief Model::fileChecker
  *      Recursively goes through dir and looks for .png files.
@@ -180,25 +339,62 @@ void Model::fileChecker(QDir dir, ViewController *vc)
     {
         QFileInfo file = dirList.at(i);
         QString fName = file.fileName();
+        QString absFP = file.absoluteFilePath();
 
         if (file.isDir())
         {
             if (fName.compare(".") == 0 || fName.compare("..") == 0)
                 ; // skip
             else
-                fileChecker(QDir(file.absoluteFilePath()), vc);
+                fileChecker(QDir(absFP), vc);
         }
         else if (!file.isDir())
         {
-            if (targetFiles.find(file.absoluteFilePath()) == targetFiles.end())
+            if (fName.contains(ext) &&
+                    targetFiles.find(absFP) == targetFiles.end())
             {
                 // Use targetFiles to add only .png files that are new visited
                 // absolute paths.
-                targetFiles.insert(file.absoluteFilePath());
+                targetFiles.insert(absFP);
 
-//                printf("emitting now\n");
+//                printf("owns lock?: %d\n", nextQLock->owns_lock());
 //                fflush(stdout);
-                emit imageFound(file, vc, ext);
+//                if (nextQLock->owns_lock())
+//                    nextQLock->unlock();
+//                nextQLock->lock();
+                std::unique_lock<std::mutex> localLock(*myMutex);
+
+                QString infoFileStr = file.absoluteFilePath();
+                infoFileStr = infoFileStr.remove(infoFileStr.size()-3,3).append("info");
+                QFile infoFile(infoFileStr);
+
+                if (!infoFile.open(QIODevice::ReadOnly))
+                {
+                    infoFile.close();
+                    printf("Problems finding file with name %s\n",
+                           infoFileStr.toStdString().c_str());
+
+                }
+                else
+                {
+                    infoFile.close();
+
+                    int size = nextQ->size();
+                    if ( size == 2 )
+                    {
+                        printf("Size is now 2!");
+                        fflush(stdout);
+//                        qFull->wait(*nextQLock);
+                        qFull->wait(localLock);
+                    }
+
+                    emit queueAdd(absFP);
+//                    qSize->wait(*nextQLock);
+                    qSize->wait(localLock);
+//                    nextQLock->unlock();
+//                    myMutex->unlock();
+                }
+
             }
         }
     }

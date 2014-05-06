@@ -132,3 +132,56 @@ void TargetRec::nextImage(QLabel *lbl, QString fileStr)
 
 //    QLabel *picLabel;
 
+/////////////////////////////// Stalker Labels //////////////////////////////////////////////
+
+StalkerLabels::StalkerLabels()
+{
+    this->name = new QLabel();
+    this->lat = new QLabel();
+    this->lon = new QLabel();
+    this->pMap = new QLabel();
+}
+
+StalkerLabels::StalkerLabels(QString name, QString lat, QString lon,
+              QString pMapPath)
+{
+    this->name = new QLabel(name);
+    this->lat = new QLabel(lat);
+    this->lon = new QLabel(lon);
+    this->pMap = new QLabel();
+
+    QFont f( "Arial", 20, QFont::Bold);
+    this->name->setFont(f);
+    this->lat->setFont(f);
+    this->lon->setFont(f);
+
+    pMap->setPixmap(QPixmap(pMapPath));
+}
+
+StalkerLabels::~StalkerLabels()
+{
+    delete this->name;
+    delete this->lat;
+    delete this->lon;
+    delete this->pMap;
+}
+
+QLabel* StalkerLabels::getName()
+{
+    return this->name;
+}
+
+QLabel* StalkerLabels::getLat()
+{
+    return this->lat;
+}
+
+QLabel* StalkerLabels::getLon()
+{
+    return this->lon;
+}
+
+QLabel* StalkerLabels::getPMap()
+{
+    return this->pMap;
+}

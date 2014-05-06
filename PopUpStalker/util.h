@@ -58,5 +58,28 @@ private:
 
 };
 
+/////////////////////////////////////////////////////////////
+
+class StalkerLabels
+{
+
+public:
+    StalkerLabels();
+    StalkerLabels(QString name, QString lat, QString lon,
+                  QString pMapPath);
+    ~StalkerLabels();
+    QLabel* getName();
+    QLabel* getLat();
+    QLabel* getLon();
+    QLabel* getPMap();
+
+private:
+    QLabel *name;
+    QLabel *lat;
+    QLabel *lon;
+    QLabel *pMap;
+
+};
+
 
 #endif // UTIL_H

@@ -2,11 +2,16 @@
 #define MODEL_H
 
 #include "viewcontroller.h"
+#include "util.h"
 #include <set>
+#include <thread>
+#include <mutex>
+#include <condition_variable>
 
 #include <QObject>
 #include <QFileInfo>
 #include <QDir>
+#include <QLabel>
 
 class ViewController;
 
@@ -60,6 +65,7 @@ signals:
 
     // Signal to be sent with those arguments. No implementation needed.
     void imageFound(QFileInfo file, ViewController *vc, QString ext);
+    void queueAdd(QString absFP);
 
 public slots:
 
@@ -76,10 +82,27 @@ public slots:
      *      ext may be unnecessary).
      */
     void addImage(QFileInfo file, ViewController *vc, QString ext);
+    void addToNextQ(QString fp);
+
+    void nextClicked();
+    void prevClicked();
 
 private:
     ViewController *vc;
     std::set<QString> targetFiles;
+    std::unique_lock<std::mutex> *nextQLock;
+    std::condition_variable *qFull; // Condition if nextQ is full
+    std::condition_variable *qSize; // Condition to sync nextQ's size
+
+
+    int prev;
+    std::vector<StalkerLabels*> *curr;
+    std::vector<StalkerLabels*> *nextQ;
+    std::vector<StalkerLabels*> *prev1;
+    std::vector<StalkerLabels*> *prev2;
+    std::vector<StalkerLabels*> *prev3;
+    std::vector<StalkerLabels*> *prev4;
+    std::vector<StalkerLabels*> *prev5;
 };
 
 #endif // MODEL_H
