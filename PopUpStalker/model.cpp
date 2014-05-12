@@ -149,8 +149,48 @@ bool Model::addValidImage(QFileInfo &file, ViewController *vc, QString ext)
         return false;
 }
 
+/**
+ * Helper function. Deletes all child widgets of the given layout @a item.
+ */
+void deleteChildWidgets(QLayoutItem *item) {
+    if (item->layout()) {
+        // Process all child items recursively.
+        for (int i = 0; i < item->layout()->count(); i++) {
+            deleteChildWidgets(item->layout()->itemAt(i));
+        }
+    }
+    delete item->widget();
+}
+
+/**
+ * Helper function. Removes all layout items within the given @a layout
+ * which either span the given @a row or @a column. If @a deleteWidgets
+ * is true, all concerned child widgets become not only removed from the
+ * layout, but also deleted.
+ *
+ * Credit: http://stackoverflow.com/questions/5395266/removing-widgets-from-qgridlayout
+ */
+void remove2(QGridLayout *layout, int row, int column, bool deleteWidgets) {
+    // We avoid usage of QGridLayout::itemAtPosition() here to improve performance.
+    for (int i = layout->count() - 1; i >= 0; i--) {
+        int r, c, rs, cs;
+        layout->getItemPosition(i, &r, &c, &rs, &cs);
+        if ((r <= row && r + rs - 1 >= row) || (c <= column && c + cs - 1 >= column)) {
+            // This layout item is subject to deletion.
+            QLayoutItem *item = layout->takeAt(i);
+//            if (deleteWidgets) {
+//                deleteChildWidgets(item);
+//            }
+            delete item;
+        }
+    }
+}
+
 void Model::nextClicked()
 {
+    if (!vc)
+        return;
+
     std::vector<StalkerLabels*> *tmp = 0;
     switch(prev) {
         case 1:
@@ -202,14 +242,43 @@ void Model::nextClicked()
         prev2 = prev1;
         prev1 = curr;
         curr = tmp;
+
+        qFull->notify_all();
     }
 
+
+    // Look into QStacked Widget for this problem
+    ViewController *vc = getViewController();
+//    MainTab * mainView = getViewController()->getView();
+    QScrollArea *scroll = vc->listScrollTabs->front();
+    remove2(vc->getView()->getGridLayout(), 3, 4, false);
+    scroll->takeWidget();
+    MainTab *myTab = new MainTab();
+    vc->setView(myTab);
+    vc->prev->setParent(myTab);
+    vc->next->setParent(myTab);
+    vc->setGridInfo(vc->prev, 4, 0);
+    vc->setGridInfo(vc->next, 4, 4);
+    scroll->setWidget(myTab);
+    scroll->show();
+
+//    getViewController()->tabWidget->clear();
+//    getViewController()->tabWidget->addTab(getViewController()->view, QWidget::tr("Main1"));
+//    mainView->setGridLayout(new QGridLayout(mainView));
+//    QGridLayout* gLayout = getViewController()->getView()->getGridLayout();
+
+//    gLayout->invalidate();
     getViewController()->getView()->setStalkerLabels(tmp); // Update the view
 
 }
 
+
+
 void Model::prevClicked()
 {
+    if (!vc)
+        return;
+
     std::vector<StalkerLabels*> *tmp = 0;
     switch(prev) {
         case 0:
@@ -239,6 +308,13 @@ void Model::prevClicked()
     if (tmp != 0)
     {
         prev++;
+        MainTab * mainView = getViewController()->getView();
+        getViewController()->tabWidget->clear();
+        getViewController()->tabWidget->addTab(getViewController()->view, QWidget::tr("Main1"));
+//        mainView->setGridLayout(new QGridLayout(mainView));
+//        QGridLayout* gLayout = getViewController()->getView()->getGridLayout();
+//        remove2(gLayout, 3, 4, false);
+//        gLayout->invalidate();
         getViewController()->getView()->setStalkerLabels(tmp); // Update the view
     }
 }
@@ -276,7 +352,7 @@ void Model::prevClicked()
 void Model::addToNextQ(QString fp)
 {
     QString infoFileStr = fp;
-    infoFileStr = infoFileStr.remove(infoFileStr.size()-3,3).append("info");
+    infoFileStr = infoFileStr.remove(infoFileStr.size()-3,3).append("txt");
     QFile infoFile(infoFileStr);
     QString attribs[3] = {0,0,0};
 
@@ -365,7 +441,7 @@ void Model::fileChecker(QDir dir, ViewController *vc)
                 std::unique_lock<std::mutex> localLock(*myMutex);
 
                 QString infoFileStr = file.absoluteFilePath();
-                infoFileStr = infoFileStr.remove(infoFileStr.size()-3,3).append("info");
+                infoFileStr = infoFileStr.remove(infoFileStr.size()-3,3).append("txt");
                 QFile infoFile(infoFileStr);
 
                 if (!infoFile.open(QIODevice::ReadOnly))
@@ -380,9 +456,10 @@ void Model::fileChecker(QDir dir, ViewController *vc)
                     infoFile.close();
 
                     int size = nextQ->size();
-                    if ( size == 2 )
+                    int sizeThresh = 5;
+                    if ( size == sizeThresh )
                     {
-                        printf("Size is now 2!");
+                        printf("Size is now %d!\n", sizeThresh);
                         fflush(stdout);
 //                        qFull->wait(*nextQLock);
                         qFull->wait(localLock);
@@ -390,7 +467,10 @@ void Model::fileChecker(QDir dir, ViewController *vc)
 
                     emit queueAdd(absFP);
 //                    qSize->wait(*nextQLock);
+
+                    // synchronize nextQ's size
                     qSize->wait(localLock);
+
 //                    nextQLock->unlock();
 //                    myMutex->unlock();
                 }

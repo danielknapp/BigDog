@@ -51,6 +51,8 @@ public:
 
     void setRowInfo(std::list<QLabel*> *labels, int row);
 
+    void setGridInfo(QWidget *label, int row, int col);
+
     void setNames(std::list<QLabel*> *labels);
 
     void setLats(std::list<QLabel*> *labels);
@@ -72,7 +74,8 @@ public:
      */
     MainTab* setupAsFirstTab();
 
-
+    void setGridLayout(QGridLayout *gLayout);
+    QGridLayout *getGridLayout();
     ViewController* getViewController();
     void setViewController(ViewController* vc);
 //    void mousePressEvent(QMouseEvent *event);

@@ -148,6 +148,18 @@ void MainTab::setRowInfo(std::list<QLabel*> *labels, int row)
     }
 }
 
+void MainTab::setGridInfo(QWidget *label, int row, int col)
+{
+    if (row < 0)
+        row = 0;
+
+    if (col < 0)
+        col = 0;
+
+    mainLayout->addWidget( label , row, col);
+
+}
+
 void MainTab::setNames(std::list<QLabel*> *labels)
 {
     setRowInfo(labels, 0);
@@ -182,6 +194,20 @@ void MainTab::setStalkerLabels(std::vector<StalkerLabels*> *labels)
 
         i++;
     }
+}
+
+void MainTab::setGridLayout(QGridLayout *gLayout)
+{
+    if (mainLayout)
+        delete this->layout();
+    mainLayout = gLayout;
+    this->setLayout(gLayout);
+}
+
+
+QGridLayout * MainTab::getGridLayout()
+{
+    return mainLayout;
 }
 
 

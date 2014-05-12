@@ -47,6 +47,8 @@ public:
      */
     void addRow(std::list<QLabel*> *lst);
 
+    void setGridInfo(QWidget *label, int row, int col);
+
     void setNames(std::list<QLabel*> *labels);
 
     void setLats(std::list<QLabel*> *labels);
@@ -55,13 +57,16 @@ public:
 
     void setImgs(std::list<QLabel*> *labels);
 
-
-private:
     MainTab *view;
     Model *model;
     MainWindow *mainWin;
     QTabWidget *tabWidget;
     std::list<QScrollArea*> *listScrollTabs;
+    GuiButton *prev;
+    GuiButton *next;
+
+private:
+
 };
 
 #endif // VIEWCONTROLLER_H

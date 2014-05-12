@@ -155,7 +155,7 @@ StalkerLabels::StalkerLabels(QString name, QString lat, QString lon,
     this->lat->setFont(f);
     this->lon->setFont(f);
 
-    pMap->setPixmap(QPixmap(pMapPath));
+    pMap->setPixmap(QPixmap(pMapPath).scaledToWidth(200));
 }
 
 StalkerLabels::~StalkerLabels()

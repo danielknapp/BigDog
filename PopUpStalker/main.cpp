@@ -61,8 +61,8 @@ int main(int argc, char *argv[])
     // Initial setup stuff for ViewController so that it will
     // be ready for looking like the gui we want that can just
     // have rows added to it
-    vc->setUpStalker();
     vc->setModel(new Model());
+    vc->setUpStalker();
 
     // Connect signals and slots so that when an image is found
     // the Model object can send a signal to be processed by the
@@ -76,7 +76,7 @@ int main(int argc, char *argv[])
                      currMod, SLOT(addToNextQ(QString)));
 
     // Setup for recursively finding images on a separate thread
-    QDir currDir("C:\\Users\\danny_000\\Downloads\\targets");
+    QDir currDir(".\\psin");
     std::thread myt(rFindImages, currMod, currDir, vc);
     myt.detach();
 

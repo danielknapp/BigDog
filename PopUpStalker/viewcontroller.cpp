@@ -40,9 +40,27 @@ void ViewController::setUpStalker()
     firstScroll->setBackgroundRole(QPalette::Dark);
     firstScroll->setWidgetResizable(true);
     MainTab * firstTab = (new MainTab())->setupAsFirstTab();
-    view = firstTab;
+    setView(firstTab);
+    firstTab->setViewController(this);
     firstScroll->setWidget(firstTab);
     tabWidget->addTab(firstScroll, QWidget::tr("Main"));
+    setModel(new Model());
+    getModel()->setViewController(this);
+
+    prev = new GuiButton("Prev");
+    next = new GuiButton("Next");
+
+    setGridInfo(prev, 4, 0);
+    setGridInfo(next, 4, 4);
+
+
+
+    QObject::connect(prev, SIGNAL(clicked()),
+                     getModel(), SLOT(prevClicked()));
+
+    QObject::connect(next, SIGNAL(clicked()),
+                     getModel(), SLOT(nextClicked()));
+
 
     // Sets up the second tab to be scrollable
 //    QScrollArea *secondScroll = new QScrollArea();
@@ -61,11 +79,15 @@ void ViewController::setUpStalker()
 
 void ViewController::setView(MainTab *view)
 {
+    if (this->view)
+        delete this->view;
     this->view = view;
 }
 
 void ViewController::setModel(Model *model)
 {
+    if (this->model)
+        delete this->model;
     this->model = model;
 }
 
@@ -92,23 +114,38 @@ void ViewController::addRow(std::list<QLabel*> *lst)
     view->addRow(lst);
 }
 
+void ViewController::setGridInfo(QWidget *label, int row, int col)
+{
+    if (!view)
+        return;
+    view->setGridInfo(label, row, col);
+}
+
 void ViewController::setNames(std::list<QLabel*> *labels)
 {
+    if (!view)
+        return;
     view->setNames(labels);
 }
 
 void ViewController::setLats(std::list<QLabel*> *labels)
 {
+    if (!view)
+        return;
     view->setLats(labels);
 }
 
 void ViewController::setLongs(std::list<QLabel*> *labels)
 {
+    if (!view)
+        return;
     view->setLongs(labels);
 }
 
 void ViewController::setImgs(std::list<QLabel*> *labels)
 {
+    if (!view)
+        return;
     view->setImgs(labels);
 }
 
