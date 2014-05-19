@@ -72,8 +72,8 @@ int main(int argc, char *argv[])
     QObject::connect(currMod, SIGNAL(imageFound(QFileInfo , ViewController *, QString )),
                      currMod, SLOT(addImage(QFileInfo , ViewController *, QString )));
 
-    QObject::connect(currMod, SIGNAL(queueAdd(QString)),
-                     currMod, SLOT(addToNextQ(QString)));
+    QObject::connect(currMod, SIGNAL(queueAdd(QString, QString)),
+                     currMod, SLOT(addToNextQ(QString, QString)));
 
     // Setup for recursively finding images on a separate thread
     QDir currDir(".\\psin");

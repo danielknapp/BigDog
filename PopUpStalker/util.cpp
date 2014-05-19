@@ -148,14 +148,17 @@ StalkerLabels::StalkerLabels(QString name, QString lat, QString lon,
     this->name = new QLabel(name);
     this->lat = new QLabel(lat);
     this->lon = new QLabel(lon);
-    this->pMap = new QLabel();
+    this->pMap = new QLabel(pMapPath);
 
-    QFont f( "Arial", 20, QFont::Bold);
-    this->name->setFont(f);
-    this->lat->setFont(f);
-    this->lon->setFont(f);
+//    QFont f( "Arial", 20, QFont::Bold);
+//    this->name->setFont(f);
+//    this->lat->setFont(f);
+//    this->lon->setFont(f);
 
-    pMap->setPixmap(QPixmap(pMapPath).scaledToWidth(200));
+    QPixmap pixMap = QPixmap(pMapPath).scaledToHeight(200);
+    if (pixMap.width() > 200)
+        pixMap = pixMap.scaledToWidth(200);
+    pMap->setPixmap(pixMap);
 }
 
 StalkerLabels::~StalkerLabels()

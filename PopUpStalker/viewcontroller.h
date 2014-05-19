@@ -7,6 +7,7 @@
 #include <QTableWidget>
 #include <QScrollArea>
 #include <QLabel>
+#include <QStackedWidget>
 
 class MainTab;
 class Model;
@@ -61,7 +62,8 @@ public:
     Model *model;
     MainWindow *mainWin;
     QTabWidget *tabWidget;
-    std::list<QScrollArea*> *listScrollTabs;
+    QScrollArea *scrollTab;
+    QStackedWidget *mainDisp;
     GuiButton *prev;
     GuiButton *next;
 

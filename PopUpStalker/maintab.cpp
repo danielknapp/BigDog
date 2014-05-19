@@ -7,8 +7,8 @@ MainTab::MainTab(QWidget *parent)
     : QWidget(parent),
       mainLayout(new QGridLayout(this))
 {
-    mainLayout->setHorizontalSpacing(30);
-    mainLayout->setVerticalSpacing(20);
+//    mainLayout->setHorizontalSpacing(30);
+//    mainLayout->setVerticalSpacing(20);
 }
 
 /**
@@ -183,14 +183,26 @@ void MainTab::setImgs(std::list<QLabel*> *labels)
 void MainTab::setStalkerLabels(std::vector<StalkerLabels*> *labels)
 {
     int i = 0;
-    for (std::vector<StalkerLabels*>::iterator start = labels->begin();
-         start != labels->end(); start++)
+    std::vector<StalkerLabels*>::iterator it;
+    for (it = labels->begin();
+         it != labels->end() && i < 5; it++)
     {
-        StalkerLabels *tmp = *start;
+        StalkerLabels *tmp = *it;
         mainLayout->addWidget( tmp->getName() , 0 , i);
         mainLayout->addWidget( tmp->getLat() , 1 , i);
         mainLayout->addWidget( tmp->getLon() , 2 , i);
         mainLayout->addWidget( tmp->getPMap() , 3 , i);
+
+        i++;
+    }
+
+    for (i = 0; it != labels->end() && i < 5; it++)
+    {
+        StalkerLabels *tmp = *it;
+        mainLayout->addWidget( tmp->getName() , 4 , i);
+        mainLayout->addWidget( tmp->getLat() , 5 , i);
+        mainLayout->addWidget( tmp->getLon() , 6 , i);
+        mainLayout->addWidget( tmp->getPMap() , 7 , i);
 
         i++;
     }

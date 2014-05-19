@@ -6,6 +6,7 @@
 #include <set>
 #include <thread>
 #include <mutex>
+#include <unordered_set>
 #include <condition_variable>
 
 #include <QObject>
@@ -61,11 +62,14 @@ public:
      */
     bool addValidImage(QFileInfo &file, ViewController *vc, QString ext = QString(""));
 
+    std::mutex *setMutex;
+//    std::unordered_set<std::string> *targetFiles;
+
 signals:
 
     // Signal to be sent with those arguments. No implementation needed.
     void imageFound(QFileInfo file, ViewController *vc, QString ext);
-    void queueAdd(QString absFP);
+    void queueAdd(QString absFP, QString fName);
 
 public slots:
 
@@ -82,14 +86,18 @@ public slots:
      *      ext may be unnecessary).
      */
     void addImage(QFileInfo file, ViewController *vc, QString ext);
-    void addToNextQ(QString fp);
+    void addToNextQ(QString fp, QString fName);
 
     void nextClicked();
     void prevClicked();
 
+
+
+
 private:
     ViewController *vc;
-    std::set<QString> targetFiles;
+    std::mutex *myMutex;
+
     std::unique_lock<std::mutex> *nextQLock;
     std::condition_variable *qFull; // Condition if nextQ is full
     std::condition_variable *qSize; // Condition to sync nextQ's size

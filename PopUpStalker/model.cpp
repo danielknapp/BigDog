@@ -6,7 +6,8 @@
 #include <QFont>
 #include <thread>
 
-std::mutex *myMutex = new std::mutex();
+//std::mutex *myMutex = new std::mutex();
+std::set<std::string> * targetFiles = new std::set<std::string>();
 
 Model::Model() :
     vc(0),
@@ -14,6 +15,8 @@ Model::Model() :
 //    nextQLock(new std::unique_lock<std::mutex>(*myMutex)),
     qFull(new std::condition_variable()),
     qSize(new std::condition_variable()),
+    myMutex(new std::mutex()),
+    setMutex(new std::mutex()),
     curr(new std::vector<StalkerLabels*>()),
     nextQ(new std::vector<StalkerLabels*>()),
     prev1(new std::vector<StalkerLabels*>()),
@@ -21,7 +24,7 @@ Model::Model() :
     prev3(new std::vector<StalkerLabels*>()),
     prev4(new std::vector<StalkerLabels*>()),
     prev5(new std::vector<StalkerLabels*>())
-//    targetFiles(new std::set<QString>())
+//    targetFiles(new std::unordered_set<std::string>())
 {
 }
 
@@ -216,11 +219,14 @@ void Model::nextClicked()
     }
     else
     {
+        if (nextQ->empty())
+            return;
+
         tmp = new std::vector<StalkerLabels*>();
         int i = 0;
         // **Note: There may be a data race here which
         // may need to be synchronized
-        while (i < 5)
+        while (i < 10)
         {
             if (!nextQ->empty())
             {
@@ -235,6 +241,16 @@ void Model::nextClicked()
             i++;
         }
 
+        // TODO: synchronize setMutex and targetFiles set
+        MainTab *anotherTab = new MainTab();
+        anotherTab->setStalkerLabels(tmp);
+
+        QWidget *remove = vc->mainDisp->widget(5);
+        if (remove)
+            vc->mainDisp->removeWidget(remove);
+
+        vc->mainDisp->insertWidget(0, anotherTab);
+
         prev5->clear();
         prev5 = prev4;
         prev4 = prev3;
@@ -248,19 +264,21 @@ void Model::nextClicked()
 
 
     // Look into QStacked Widget for this problem
-    ViewController *vc = getViewController();
-//    MainTab * mainView = getViewController()->getView();
-    QScrollArea *scroll = vc->listScrollTabs->front();
-    remove2(vc->getView()->getGridLayout(), 3, 4, false);
-    scroll->takeWidget();
-    MainTab *myTab = new MainTab();
-    vc->setView(myTab);
-    vc->prev->setParent(myTab);
-    vc->next->setParent(myTab);
-    vc->setGridInfo(vc->prev, 4, 0);
-    vc->setGridInfo(vc->next, 4, 4);
-    scroll->setWidget(myTab);
-    scroll->show();
+//    ViewController *vc = getViewController();
+////    MainTab * mainView = getViewController()->getView();
+//    QScrollArea *scroll = vc->scrollTab;
+////    remove2(vc->getView()->getGridLayout(), 3, 4, false);
+////    scroll->takeWidget();
+//    MainTab *myTab = new MainTab();
+//    vc->setView(myTab);
+//    vc->prev->setParent(myTab);
+//    vc->next->setParent(myTab);
+//    vc->setGridInfo(vc->prev, 4, 0);
+//    vc->setGridInfo(vc->next, 4, 4);
+//    scroll->setWidget(myTab);
+//    scroll->show();
+
+    vc->mainDisp->setCurrentIndex(prev);
 
 //    getViewController()->tabWidget->clear();
 //    getViewController()->tabWidget->addTab(getViewController()->view, QWidget::tr("Main1"));
@@ -268,7 +286,7 @@ void Model::nextClicked()
 //    QGridLayout* gLayout = getViewController()->getView()->getGridLayout();
 
 //    gLayout->invalidate();
-    getViewController()->getView()->setStalkerLabels(tmp); // Update the view
+//    getViewController()->getView()->setStalkerLabels(tmp); // Update the view
 
 }
 
@@ -308,14 +326,18 @@ void Model::prevClicked()
     if (tmp != 0)
     {
         prev++;
-        MainTab * mainView = getViewController()->getView();
-        getViewController()->tabWidget->clear();
-        getViewController()->tabWidget->addTab(getViewController()->view, QWidget::tr("Main1"));
-//        mainView->setGridLayout(new QGridLayout(mainView));
-//        QGridLayout* gLayout = getViewController()->getView()->getGridLayout();
-//        remove2(gLayout, 3, 4, false);
-//        gLayout->invalidate();
-        getViewController()->getView()->setStalkerLabels(tmp); // Update the view
+
+//        MainTab * mainView = getViewController()->getView();
+//        getViewController()->tabWidget->clear();
+//        getViewController()->tabWidget->addTab(getViewController()->view, QWidget::tr("Main1"));
+////        mainView->setGridLayout(new QGridLayout(mainView));
+////        QGridLayout* gLayout = getViewController()->getView()->getGridLayout();
+////        remove2(gLayout, 3, 4, false);
+////        gLayout->invalidate();
+//        getViewController()->getView()->setStalkerLabels(tmp); // Update the view
+
+
+        vc->mainDisp->setCurrentIndex(prev);
     }
 }
 
@@ -349,12 +371,16 @@ void Model::prevClicked()
 //    }
 //}
 
-void Model::addToNextQ(QString fp)
+void Model::addToNextQ(QString fp, QString fName)
 {
     QString infoFileStr = fp;
     infoFileStr = infoFileStr.remove(infoFileStr.size()-3,3).append("txt");
     QFile infoFile(infoFileStr);
-    QString attribs[3] = {0,0,0};
+
+    printf("File Name: %s\n", fName.toStdString().c_str());
+    fflush(stdout);
+
+    QString attribs[2] = {0,0};
 
     if (!infoFile.open(QIODevice::ReadOnly))
     {
@@ -367,7 +393,14 @@ void Model::addToNextQ(QString fp)
         QTextStream infoFileStream(&infoFile);
 
         int i = 0;
-        while (!infoFileStream.atEnd() && i < 3)
+        while (!infoFileStream.atEnd() && i < 4)
+        {
+            infoFileStream.readLine();
+            i++;
+        }
+
+        i = 0;
+        while (!infoFileStream.atEnd() && i < 2)
         {
             QString line = infoFileStream.readLine();
             if (line.isEmpty())
@@ -380,7 +413,7 @@ void Model::addToNextQ(QString fp)
     infoFile.close();
 
     StalkerLabels *lbls = new StalkerLabels(
-                attribs[0], attribs[1], attribs[2], fp);
+                fName, attribs[0], attribs[1], fp);
 
 //    nextQLock->lock();
     std::unique_lock<std::mutex> localLock(*myMutex);
@@ -416,6 +449,7 @@ void Model::fileChecker(QDir dir, ViewController *vc)
         QFileInfo file = dirList.at(i);
         QString fName = file.fileName();
         QString absFP = file.absoluteFilePath();
+        std::string stdAbsFP = std::string(absFP.toStdString());
 
         if (file.isDir())
         {
@@ -426,18 +460,21 @@ void Model::fileChecker(QDir dir, ViewController *vc)
         }
         else if (!file.isDir())
         {
+            setMutex->lock();
+            std::set<std::string>::iterator found = targetFiles->find(stdAbsFP);
+            std::set<std::string>::iterator end = targetFiles->end();
             if (fName.contains(ext) &&
-                    targetFiles.find(absFP) == targetFiles.end())
+                    found == end /* == targetFiles->end()*/)
             {
-                // Use targetFiles to add only .png files that are new visited
-                // absolute paths.
-                targetFiles.insert(absFP);
 
+                setMutex->unlock();
 //                printf("owns lock?: %d\n", nextQLock->owns_lock());
 //                fflush(stdout);
 //                if (nextQLock->owns_lock())
 //                    nextQLock->unlock();
 //                nextQLock->lock();
+
+                // Need a lock for condition variables
                 std::unique_lock<std::mutex> localLock(*myMutex);
 
                 QString infoFileStr = file.absoluteFilePath();
@@ -453,10 +490,16 @@ void Model::fileChecker(QDir dir, ViewController *vc)
                 }
                 else
                 {
+                    // Use targetFiles to add only .png files that are new visited
+                    // absolute paths.
+                    setMutex->lock();
+                    targetFiles->insert(stdAbsFP);
+                    setMutex->unlock();
+
                     infoFile.close();
 
                     int size = nextQ->size();
-                    int sizeThresh = 5;
+                    int sizeThresh = 10;
                     if ( size == sizeThresh )
                     {
                         printf("Size is now %d!\n", sizeThresh);
@@ -465,7 +508,7 @@ void Model::fileChecker(QDir dir, ViewController *vc)
                         qFull->wait(localLock);
                     }
 
-                    emit queueAdd(absFP);
+                    emit queueAdd(absFP, fName);
 //                    qSize->wait(*nextQLock);
 
                     // synchronize nextQ's size
@@ -475,6 +518,10 @@ void Model::fileChecker(QDir dir, ViewController *vc)
 //                    myMutex->unlock();
                 }
 
+            } // end if ext check
+            else
+            {
+                setMutex->unlock();
             }
         }
     }

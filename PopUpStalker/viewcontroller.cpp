@@ -6,7 +6,8 @@
 
 ViewController::ViewController() :
     view(0),
-    model(0)
+    model(0),
+    mainDisp(0)
 {
 }
 
@@ -19,7 +20,7 @@ ViewController::ViewController() :
 ViewController::~ViewController()
 {
     delete mainWin;
-    delete listScrollTabs;
+    delete scrollTab;
 }
 
 /**
@@ -31,27 +32,32 @@ ViewController::~ViewController()
 void ViewController::setUpStalker()
 {
     mainWin = new MainWindow();
-    listScrollTabs = new std::list<QScrollArea*>();
+    scrollTab = new QScrollArea();
     tabWidget = new QTabWidget(mainWin);
 
     // Sets up the first tab to be scrollable
-    QScrollArea *firstScroll = new QScrollArea();
-    listScrollTabs->push_back(firstScroll);
-    firstScroll->setBackgroundRole(QPalette::Dark);
-    firstScroll->setWidgetResizable(true);
-    MainTab * firstTab = (new MainTab())->setupAsFirstTab();
-    setView(firstTab);
-    firstTab->setViewController(this);
-    firstScroll->setWidget(firstTab);
-    tabWidget->addTab(firstScroll, QWidget::tr("Main"));
+    scrollTab->setBackgroundRole(QPalette::Dark);
+    scrollTab->setWidgetResizable(true);
+    MainTab * mainTab = (new MainTab());
+    setView(mainTab);
+    mainTab->setViewController(this);
+    scrollTab->setWidget(mainTab);
+    tabWidget->addTab(scrollTab, QWidget::tr("Main"));
     setModel(new Model());
     getModel()->setViewController(this);
+
+    mainDisp = new QStackedWidget(scrollTab);
+    MainTab * firstTab = (new MainTab())->setupAsFirstTab();
+    mainDisp->addWidget(firstTab);
+    mainDisp->setCurrentWidget(firstTab);
+    QGridLayout * tron = mainTab->getGridLayout();
+    tron->addWidget(mainDisp, 0, 0, 1, 2);
 
     prev = new GuiButton("Prev");
     next = new GuiButton("Next");
 
-    setGridInfo(prev, 4, 0);
-    setGridInfo(next, 4, 4);
+    setGridInfo(prev, 1, 0);
+    setGridInfo(next, 1, 1);
 
 
 
@@ -64,7 +70,7 @@ void ViewController::setUpStalker()
 
     // Sets up the second tab to be scrollable
 //    QScrollArea *secondScroll = new QScrollArea();
-//    listScrollTabs->push_back(secondScroll);
+//    scrollTab->push_back(secondScroll);
 //    secondScroll->setBackgroundRole(QPalette::Light);
 //    secondScroll->setWidgetResizable(true);
 //    MainTab * secondTab = new MainTab();
