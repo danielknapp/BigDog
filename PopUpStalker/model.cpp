@@ -7,7 +7,7 @@
 #include <thread>
 
 //std::mutex *myMutex = new std::mutex();
-std::set<std::string> * targetFiles = new std::set<std::string>();
+std::unordered_set<std::string> * targetFiles = new std::unordered_set<std::string>();
 
 Model::Model() :
     vc(0),
@@ -461,10 +461,10 @@ void Model::fileChecker(QDir dir, ViewController *vc)
         else if (!file.isDir())
         {
             setMutex->lock();
-            std::set<std::string>::iterator found = targetFiles->find(stdAbsFP);
-            std::set<std::string>::iterator end = targetFiles->end();
+//            std::unordered_set<std::string>::iterator found = targetFiles->find(stdAbsFP);
+//            std::unordered_set<std::string>::iterator end = targetFiles->end();
             if (fName.contains(ext) &&
-                    found == end /* == targetFiles->end()*/)
+                    targetFiles->find(stdAbsFP) == targetFiles->end())
             {
 
                 setMutex->unlock();
