@@ -63,7 +63,7 @@ public:
     bool addValidImage(QFileInfo &file, ViewController *vc, QString ext = QString(""));
 
     std::mutex *setMutex;
-//    std::unordered_set<std::string> *targetFiles;
+    std::unordered_set<std::string> *targetFiles;
 
 signals:
 

@@ -7,7 +7,7 @@
 #include <thread>
 
 //std::mutex *myMutex = new std::mutex();
-std::unordered_set<std::string> * targetFiles = new std::unordered_set<std::string>();
+//std::unordered_set<std::string> * targetFiles = new std::unordered_set<std::string>();
 
 Model::Model() :
     vc(0),
@@ -23,15 +23,10 @@ Model::Model() :
     prev2(new std::vector<StalkerLabels*>()),
     prev3(new std::vector<StalkerLabels*>()),
     prev4(new std::vector<StalkerLabels*>()),
-    prev5(new std::vector<StalkerLabels*>())
-//    targetFiles(new std::unordered_set<std::string>())
+    prev5(new std::vector<StalkerLabels*>()),
+    targetFiles(new std::unordered_set<std::string>())
 {
 }
-
-//Model::Model(ViewController *vc) :
-//    vc(vc)
-//{
-//}
 
 void Model::setViewController(ViewController *vc)
 {
@@ -150,43 +145,6 @@ bool Model::addValidImage(QFileInfo &file, ViewController *vc, QString ext)
     }
     else
         return false;
-}
-
-/**
- * Helper function. Deletes all child widgets of the given layout @a item.
- */
-void deleteChildWidgets(QLayoutItem *item) {
-    if (item->layout()) {
-        // Process all child items recursively.
-        for (int i = 0; i < item->layout()->count(); i++) {
-            deleteChildWidgets(item->layout()->itemAt(i));
-        }
-    }
-    delete item->widget();
-}
-
-/**
- * Helper function. Removes all layout items within the given @a layout
- * which either span the given @a row or @a column. If @a deleteWidgets
- * is true, all concerned child widgets become not only removed from the
- * layout, but also deleted.
- *
- * Credit: http://stackoverflow.com/questions/5395266/removing-widgets-from-qgridlayout
- */
-void remove2(QGridLayout *layout, int row, int column, bool deleteWidgets) {
-    // We avoid usage of QGridLayout::itemAtPosition() here to improve performance.
-    for (int i = layout->count() - 1; i >= 0; i--) {
-        int r, c, rs, cs;
-        layout->getItemPosition(i, &r, &c, &rs, &cs);
-        if ((r <= row && r + rs - 1 >= row) || (c <= column && c + cs - 1 >= column)) {
-            // This layout item is subject to deletion.
-            QLayoutItem *item = layout->takeAt(i);
-//            if (deleteWidgets) {
-//                deleteChildWidgets(item);
-//            }
-            delete item;
-        }
-    }
 }
 
 void Model::nextClicked()
@@ -451,15 +409,18 @@ void Model::fileChecker(QDir dir, ViewController *vc)
         QString absFP = file.absoluteFilePath();
         std::string stdAbsFP = std::string(absFP.toStdString());
 
-        if (file.isDir())
+        // Don't need the recursive check so file is dir path is
+        // just commented out since we just wanted to skip that case
+//        if (file.isDir())
+//        {
+//            if (fName.compare(".") == 0 || fName.compare("..") == 0)
+//                ; // skip
+//            else
+//                fileChecker(QDir(absFP), vc);
+//        }
+        if (!file.isDir())
         {
-            if (fName.compare(".") == 0 || fName.compare("..") == 0)
-                ; // skip
-            else
-                fileChecker(QDir(absFP), vc);
-        }
-        else if (!file.isDir())
-        {
+            // ensure either branch of the if unlocks the mutex afterwards
             setMutex->lock();
 //            std::unordered_set<std::string>::iterator found = targetFiles->find(stdAbsFP);
 //            std::unordered_set<std::string>::iterator end = targetFiles->end();
