@@ -398,6 +398,9 @@ void Model::addToNextQ(QString fp, QString fName)
  */
 void Model::fileChecker(QDir dir, ViewController *vc)
 {
+
+    // TODO: Do the file removing in here so it is handled by the side
+    //       thread and does not hang the gui.
 //    recurseDir(dir, vc);
     dir.refresh();
     QFileInfoList dirList = dir.entryInfoList();
