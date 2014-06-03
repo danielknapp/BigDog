@@ -17,7 +17,7 @@
 #include <QFileInfoList>
 #include <QFileInfo>
 
-QString inputDir = ".\\psin";
+//extern QString inputDir;
 
 /**
  * @brief rFindImages
@@ -69,14 +69,15 @@ int main(int argc, char *argv[])
     // same object but on the main thread (at least I think that
     // is how it works...)
     Model *currMod = vc->getModel();
-    QObject::connect(currMod, SIGNAL(imageFound(QFileInfo , ViewController *, QString )),
-                     currMod, SLOT(addImage(QFileInfo , ViewController *, QString )));
+//    QObject::connect(currMod, SIGNAL(imageFound(QFileInfo , ViewController *, QString )),
+//                     currMod, SLOT(addImage(QFileInfo , ViewController *, QString )));
 
     QObject::connect(currMod, SIGNAL(queueAdd(QString, QString)),
                      currMod, SLOT(addToNextQ(QString, QString)));
 
+    QString inDir = getInputDir();
     // Setup for continuously finding images on a separate thread
-    QDir currDir(inputDir);
+    QDir currDir(inDir);
     std::thread myt(rFindImages, currMod, currDir, vc);
     myt.detach();
 

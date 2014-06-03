@@ -45,13 +45,13 @@ void ViewController::setUpBigDog()
     tabWidget->addTab(firstScroll, QWidget::tr("Main"));
 
     // Sets up the second tab to be scrollable
-    QScrollArea *secondScroll = new QScrollArea();
-    listScrollTabs->push_back(secondScroll);
-    secondScroll->setBackgroundRole(QPalette::Light);
-    secondScroll->setWidgetResizable(true);
-    MainTab * secondTab = new MainTab();
-    secondScroll->setWidget(secondTab);
-    tabWidget->addTab(secondScroll, QWidget::tr("Second Tab"));
+//    QScrollArea *secondScroll = new QScrollArea();
+//    listScrollTabs->push_back(secondScroll);
+//    secondScroll->setBackgroundRole(QPalette::Light);
+//    secondScroll->setWidgetResizable(true);
+//    MainTab * secondTab = new MainTab();
+//    secondScroll->setWidget(secondTab);
+//    tabWidget->addTab(secondScroll, QWidget::tr("Second Tab"));
 
     // Display tabWidget on the MainWindow
     mainWin->setCentralWidget(tabWidget);

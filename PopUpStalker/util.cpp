@@ -1,6 +1,15 @@
 #include "util.h"
 #include <thread>
 
+
+QString inputDir = ".\\psin";
+
+QString getInputDir()
+{
+    return inputDir;
+}
+
+
 GuiButton::GuiButton(QWidget *parent) :
     QPushButton(parent),
     funptr(0)
@@ -140,6 +149,7 @@ StalkerLabels::StalkerLabels()
     this->lat = new QLabel();
     this->lon = new QLabel();
     this->pMap = new QLabel();
+    this->absPath = "";
 }
 
 StalkerLabels::StalkerLabels(QString name, QString lat, QString lon,
@@ -149,6 +159,7 @@ StalkerLabels::StalkerLabels(QString name, QString lat, QString lon,
     this->lat = new QLabel(lat);
     this->lon = new QLabel(lon);
     this->pMap = new QLabel(pMapPath);
+    this->absPath = pMapPath;
 
 //    QFont f( "Arial", 20, QFont::Bold);
 //    this->name->setFont(f);
@@ -187,4 +198,9 @@ QLabel* StalkerLabels::getLon()
 QLabel* StalkerLabels::getPMap()
 {
     return this->pMap;
+}
+
+QString StalkerLabels::getAbsPath()
+{
+    return this->absPath;
 }

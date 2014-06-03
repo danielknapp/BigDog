@@ -15,6 +15,16 @@
 #include <queue>
 #include <QObject>
 
+// Global vars
+//QString inputDir = ".\\psin";
+
+QString getInputDir();
+//{
+//    return inputDir;
+//}
+
+
+/////////////////////////////////////////////////////////////
 
 
 class GuiButton : public QPushButton
@@ -72,12 +82,15 @@ public:
     QLabel* getLat();
     QLabel* getLon();
     QLabel* getPMap();
+    QString getAbsPath();
+
 
 private:
     QLabel *name;
     QLabel *lat;
     QLabel *lon;
     QLabel *pMap;
+    QString absPath;
 
 };
 

@@ -60,7 +60,7 @@ public:
      * @return
      *      A boolean value representing whether the image was actually added or not
      */
-    bool addValidImage(QFileInfo &file, ViewController *vc, QString ext = QString(""));
+//    bool addValidImage(QFileInfo &file, ViewController *vc, QString ext = QString(""));
 
     std::mutex *setMutex;
     std::unordered_set<std::string> *targetFiles;
@@ -85,7 +85,7 @@ public slots:
      *      (note it is probably best to handle this before using this slot, so
      *      ext may be unnecessary).
      */
-    void addImage(QFileInfo file, ViewController *vc, QString ext);
+//    void addImage(QFileInfo file, ViewController *vc, QString ext);
     void addToNextQ(QString fp, QString fName);
 
     void nextClicked();

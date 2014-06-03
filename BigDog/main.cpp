@@ -16,6 +16,7 @@
 #include <QFileInfoList>
 #include <QFileInfo>
 
+QString inputDir = ".\\bdstore";
 
 /**
  * @brief rFindImages
@@ -71,7 +72,7 @@ int main(int argc, char *argv[])
                      currMod, SLOT(addImage(QFileInfo , ViewController *, QString )));
 
     // Setup for recursively finding images on a separate thread
-    QDir currDir("C:\\Users\\danny_000\\Downloads\\targets");
+    QDir currDir(inputDir);
     std::thread myt(rFindImages, currMod, currDir, vc);
     myt.detach();
 

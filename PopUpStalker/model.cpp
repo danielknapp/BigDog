@@ -50,12 +50,12 @@ ViewController* Model::getViewController()
  *      (note it is probably best to handle this before using this slot, so
  *      ext may be unnecessary).
  */
-void Model::addImage(QFileInfo file, ViewController *vc, QString ext)
-{
-    // Calls another method because this one cannot return a boolean.
-    // The code can probably be copied here if that is not needed.
-    addValidImage(file, vc, ext);
-}
+//void Model::addImage(QFileInfo file, ViewController *vc, QString ext)
+//{
+//    // Calls another method because this one cannot return a boolean.
+//    // The code can probably be copied here if that is not needed.
+//    addValidImage(file, vc, ext);
+//}
 
 /**
  * @brief Model::addValidImage
@@ -71,81 +71,81 @@ void Model::addImage(QFileInfo file, ViewController *vc, QString ext)
  * @return
  *      A boolean value representing whether the image was actually added or not
  */
-bool Model::addValidImage(QFileInfo &file, ViewController *vc, QString ext)
-{
-    QString fileName = file.fileName();
-    int count = 1;
-    if (fileName.contains(ext))
-    {
-        printf("got %d!\n%s\n", count++, file.absoluteFilePath().toStdString().c_str());
+//bool Model::addValidImage(QFileInfo &file, ViewController *vc, QString ext)
+//{
+//    QString fileName = file.fileName();
+//    int count = 1;
+//    if (fileName.contains(ext))
+//    {
+//        printf("got %d!\n%s\n", count++, file.absoluteFilePath().toStdString().c_str());
 
-        QString infoFileStr = file.absoluteFilePath();
-        infoFileStr = infoFileStr.remove(infoFileStr.size()-3,3).append("info");
-        QFile infoFile(infoFileStr);
+//        QString infoFileStr = file.absoluteFilePath();
+//        infoFileStr = infoFileStr.remove(infoFileStr.size()-3,3).append("info");
+//        QFile infoFile(infoFileStr);
 
-        QLabel *charT;
-        QLabel *charC;
-        QLabel *shapeT;
-        QLabel *shapeC;
-        QLabel *lat;
-        QLabel *lon;
-        QLabel** properties[] = {&charT, &charC, &shapeT,
-                                 &shapeC, &lat, &lon};
+//        QLabel *charT;
+//        QLabel *charC;
+//        QLabel *shapeT;
+//        QLabel *shapeC;
+//        QLabel *lat;
+//        QLabel *lon;
+//        QLabel** properties[] = {&charT, &charC, &shapeT,
+//                                 &shapeC, &lat, &lon};
 
-        if (!infoFile.open(QIODevice::ReadOnly))
-        {
-            printf("Problems finding file with name %s\n", infoFileStr.toStdString().c_str());
-            charT = new QLabel("CharType");
-            charC = new QLabel("CharColor");
-            shapeT = new QLabel("ShapeType");
-            shapeC = new QLabel("ShapeColor");
-            lat = new QLabel("Latitude");
-            lon = new QLabel("Longitude");
-        }
-        else
-        {
-            QTextStream infoFileStream(&infoFile);
+//        if (!infoFile.open(QIODevice::ReadOnly))
+//        {
+//            printf("Problems finding file with name %s\n", infoFileStr.toStdString().c_str());
+//            charT = new QLabel("CharType");
+//            charC = new QLabel("CharColor");
+//            shapeT = new QLabel("ShapeType");
+//            shapeC = new QLabel("ShapeColor");
+//            lat = new QLabel("Latitude");
+//            lon = new QLabel("Longitude");
+//        }
+//        else
+//        {
+//            QTextStream infoFileStream(&infoFile);
 
-            int i = 0;
-            while (!infoFileStream.atEnd())
-            {
-                QString line = infoFileStream.readLine();
-                if (line.isEmpty())
-                    continue;
-                QLabel *temp = new QLabel(line);
-                QFont f( "Arial", 20, QFont::Bold);
-                temp->setFont( f);
-                *(properties[i++]) = temp;
-            }
-        }
-//        printf("size of properties: %d\n", sizeof(properties));
+//            int i = 0;
+//            while (!infoFileStream.atEnd())
+//            {
+//                QString line = infoFileStream.readLine();
+//                if (line.isEmpty())
+//                    continue;
+//                QLabel *temp = new QLabel(line);
+//                QFont f( "Arial", 20, QFont::Bold);
+//                temp->setFont( f);
+//                *(properties[i++]) = temp;
+//            }
+//        }
+////        printf("size of properties: %d\n", sizeof(properties));
 
-        infoFile.close();
+//        infoFile.close();
 
-        // prep for addition to the gui through vc
-        std::list<QLabel*> *lst = new std::list<QLabel*>();
-        QLabel *picLbl = new QLabel();
-        picLbl->setPixmap(QPixmap(file.absoluteFilePath()).scaledToWidth(150));
-//        QLabel *charT = new QLabel("CharType");
-//        QLabel *charC = new QLabel("CharColor");
-//        QLabel *shapeT = new QLabel("ShapeType");
-//        QLabel *shapeC = new QLabel("ShapeColor");
-        lst->push_back(picLbl);
-        lst->push_back(charT);
-        lst->push_back(charC);
-        lst->push_back(shapeT);
-        lst->push_back(shapeC);
-        lst->push_back(lat);
-        lst->push_back(lon);
+//        // prep for addition to the gui through vc
+//        std::list<QLabel*> *lst = new std::list<QLabel*>();
+//        QLabel *picLbl = new QLabel();
+//        picLbl->setPixmap(QPixmap(file.absoluteFilePath()).scaledToWidth(150));
+////        QLabel *charT = new QLabel("CharType");
+////        QLabel *charC = new QLabel("CharColor");
+////        QLabel *shapeT = new QLabel("ShapeType");
+////        QLabel *shapeC = new QLabel("ShapeColor");
+//        lst->push_back(picLbl);
+//        lst->push_back(charT);
+//        lst->push_back(charC);
+//        lst->push_back(shapeT);
+//        lst->push_back(shapeC);
+//        lst->push_back(lat);
+//        lst->push_back(lon);
 
-        vc->addRow(lst);
+//        vc->addRow(lst);
 
-        delete lst;
-        return true;
-    }
-    else
-        return false;
-}
+//        delete lst;
+//        return true;
+//    }
+//    else
+//        return false;
+//}
 
 void Model::nextClicked()
 {
@@ -209,6 +209,31 @@ void Model::nextClicked()
 
         vc->mainDisp->insertWidget(0, anotherTab);
 
+        // Before clear of prev5, delete input files
+        for (std::vector<StalkerLabels*>::iterator start = prev5->begin();
+             start != prev5->end(); start++)
+        {
+//            StalkerLabels * curr = start*;
+//            QString currStr = curr->getAbsPath();
+            QString picPath = (*start)->getAbsPath();
+
+            // Don't delete an empty path
+            if (picPath.isEmpty())
+                continue;
+
+            QString infoPath = picPath;
+            infoPath = infoPath.remove(infoPath.size()-3,3).append("txt");
+            if ( !QFile::remove(picPath) )
+            {
+                printf("Model.cpp: Something went wrong deleting a picture\n");
+            }
+            if ( !QFile::remove(infoPath) )
+            {
+                printf("Model.cpp: Something went wrong deleting a text file\n");
+            }
+            fflush(stdout);
+        }
+
         prev5->clear();
         prev5 = prev4;
         prev4 = prev3;
@@ -220,31 +245,8 @@ void Model::nextClicked()
         qFull->notify_all();
     }
 
-
-    // Look into QStacked Widget for this problem
-//    ViewController *vc = getViewController();
-////    MainTab * mainView = getViewController()->getView();
-//    QScrollArea *scroll = vc->scrollTab;
-////    remove2(vc->getView()->getGridLayout(), 3, 4, false);
-////    scroll->takeWidget();
-//    MainTab *myTab = new MainTab();
-//    vc->setView(myTab);
-//    vc->prev->setParent(myTab);
-//    vc->next->setParent(myTab);
-//    vc->setGridInfo(vc->prev, 4, 0);
-//    vc->setGridInfo(vc->next, 4, 4);
-//    scroll->setWidget(myTab);
-//    scroll->show();
-
     vc->mainDisp->setCurrentIndex(prev);
 
-//    getViewController()->tabWidget->clear();
-//    getViewController()->tabWidget->addTab(getViewController()->view, QWidget::tr("Main1"));
-//    mainView->setGridLayout(new QGridLayout(mainView));
-//    QGridLayout* gLayout = getViewController()->getView()->getGridLayout();
-
-//    gLayout->invalidate();
-//    getViewController()->getView()->setStalkerLabels(tmp); // Update the view
 
 }
 
@@ -373,15 +375,12 @@ void Model::addToNextQ(QString fp, QString fName)
     StalkerLabels *lbls = new StalkerLabels(
                 fName, attribs[0], attribs[1], fp);
 
-//    nextQLock->lock();
     std::unique_lock<std::mutex> localLock(*myMutex);
 
     nextQ->push_back(lbls);
 
     qSize->notify_all();
 
-//    nextQLock->unlock();
-//    myMutex->unlock();
 
 }
 
@@ -425,18 +424,12 @@ void Model::fileChecker(QDir dir, ViewController *vc)
         {
             // ensure either branch of the if unlocks the mutex afterwards
             setMutex->lock();
-//            std::unordered_set<std::string>::iterator found = targetFiles->find(stdAbsFP);
-//            std::unordered_set<std::string>::iterator end = targetFiles->end();
+
             if (fName.contains(ext) &&
                     targetFiles->find(stdAbsFP) == targetFiles->end())
             {
 
                 setMutex->unlock();
-//                printf("owns lock?: %d\n", nextQLock->owns_lock());
-//                fflush(stdout);
-//                if (nextQLock->owns_lock())
-//                    nextQLock->unlock();
-//                nextQLock->lock();
 
                 // Need a lock for condition variables
                 std::unique_lock<std::mutex> localLock(*myMutex);
@@ -463,23 +456,19 @@ void Model::fileChecker(QDir dir, ViewController *vc)
                     infoFile.close();
 
                     int size = nextQ->size();
-                    int sizeThresh = 10;
+                    int sizeThresh = 20;
                     if ( size == sizeThresh )
                     {
                         printf("Size is now %d!\n", sizeThresh);
                         fflush(stdout);
-//                        qFull->wait(*nextQLock);
                         qFull->wait(localLock);
                     }
 
                     emit queueAdd(absFP, fName);
-//                    qSize->wait(*nextQLock);
 
                     // synchronize nextQ's size
                     qSize->wait(localLock);
 
-//                    nextQLock->unlock();
-//                    myMutex->unlock();
                 }
 
             } // end if ext check

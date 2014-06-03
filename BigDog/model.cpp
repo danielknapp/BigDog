@@ -70,14 +70,18 @@ bool Model::addValidImage(QFileInfo &file, ViewController *vc, QString ext)
         printf("got %d!\n%s\n", count++, file.absoluteFilePath().toStdString().c_str());
 
         QString infoFileStr = file.absoluteFilePath();
-        infoFileStr = infoFileStr.remove(infoFileStr.size()-3,3).append("info");
+        infoFileStr = infoFileStr.remove(infoFileStr.size()-3,3).append("txt");
         QFile infoFile(infoFileStr);
 
         QLabel *charT;
         QLabel *charC;
         QLabel *shapeT;
         QLabel *shapeC;
-        QLabel** properties[] = {&charT, &charC, &shapeT, &shapeC};
+        QLabel *lat;
+        QLabel *lon;
+        QLabel *orien;
+        QLabel** properties[] = {&charT, &charC, &shapeT, &shapeC, &lat, &lon, &orien};
+        int propLen = (sizeof properties)/(sizeof *properties);
 
         if (!infoFile.open(QIODevice::ReadOnly))
         {
@@ -86,19 +90,34 @@ bool Model::addValidImage(QFileInfo &file, ViewController *vc, QString ext)
             charC = new QLabel("CharColor");
             shapeT = new QLabel("ShapeType");
             shapeC = new QLabel("ShapeColor");
+            lat = new QLabel("0.0");
+            lon = new QLabel("0.0");
+            orien = new QLabel("0.0");
         }
         else
         {
             QTextStream infoFileStream(&infoFile);
 
             int i = 0;
-            while (!infoFileStream.atEnd())
+//            int j = sizeof properties;
+//            int k = sizeof *properties;
+            while (!infoFileStream.atEnd() &&
+                   i < propLen)
             {
                 QString line = infoFileStream.readLine();
                 if (line.isEmpty())
                     continue;
                 QLabel *temp = new QLabel(line);
-                QFont f( "Arial", 20, QFont::Bold);
+                QFont f( "Arial", 14, QFont::Bold);
+                temp->setFont( f);
+                *(properties[i++]) = temp;
+            }
+
+            // ensure there is some label at least
+            while (i < propLen)
+            {
+                QLabel *temp = new QLabel("notFound");
+                QFont f( "Arial", 14, QFont::Bold);
                 temp->setFont( f);
                 *(properties[i++]) = temp;
             }
@@ -115,11 +134,20 @@ bool Model::addValidImage(QFileInfo &file, ViewController *vc, QString ext)
 //        QLabel *charC = new QLabel("CharColor");
 //        QLabel *shapeT = new QLabel("ShapeType");
 //        QLabel *shapeC = new QLabel("ShapeColor");
+
         lst->push_back(picLbl);
-        lst->push_back(charT);
-        lst->push_back(charC);
-        lst->push_back(shapeT);
-        lst->push_back(shapeC);
+
+        for (int i = 0; i < propLen; i++)
+        {
+            lst->push_back(*properties[i]);
+        }
+
+//        lst->push_back(charT);
+//        lst->push_back(charC);
+//        lst->push_back(shapeT);
+//        lst->push_back(shapeC);
+//        lst->push_back(lat);
+//        lst->push_back(lon);
 
         vc->addRow(lst);
 
@@ -181,14 +209,16 @@ void Model::fileChecker(QDir dir, ViewController *vc)
         QFileInfo file = dirList.at(i);
         QString fName = file.fileName();
 
-        if (file.isDir())
-        {
-            if (fName.compare(".") == 0 || fName.compare("..") == 0)
-                ; // skip
-            else
-                fileChecker(QDir(file.absoluteFilePath()), vc);
-        }
-        else if (!file.isDir())
+        // Don't need the recursive check so file is dir path is
+        // just commented out since we just wanted to skip that case
+//        if (file.isDir())
+//        {
+//            if (fName.compare(".") == 0 || fName.compare("..") == 0)
+//                ; // skip
+//            else
+//                fileChecker(QDir(file.absoluteFilePath()), vc);
+//        } else
+        if (!file.isDir())
         {
             if (targetFiles.find(file.absoluteFilePath()) == targetFiles.end())
             {

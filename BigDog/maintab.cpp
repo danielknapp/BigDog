@@ -27,6 +27,7 @@ MainTab* MainTab::setupAsFirstTab()
     this->addColumn("ShapeColor");
     this->addColumn("Latitude");
     this->addColumn("Longitude");
+    this->addColumn("Orientation");
 
     return this;
 }
@@ -55,7 +56,7 @@ void MainTab::addColumn(const char* label)
 void MainTab::addColumn(const char* label, int col)
 {
     QLabel * newLabel = new QLabel(label);
-    QFont f( "Arial", 20, QFont::Bold);
+    QFont f( "Arial", 14, QFont::Bold);
     newLabel->setFont( f);
 
     mainLayout -> addWidget(newLabel, 0, col);
