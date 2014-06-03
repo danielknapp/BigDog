@@ -21,5 +21,4 @@ SOURCES += main.cpp\
 HEADERS  += mainwindow.h \
     maintab.h \
     model.h \
-    viewcontroller.h \
-    dirent.h
+    viewcontroller.h

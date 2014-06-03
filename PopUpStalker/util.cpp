@@ -10,6 +10,8 @@ QString getInputDir()
 }
 
 
+/////////////////////////////// Gui Button //////////////////////////////////////////////
+
 GuiButton::GuiButton(QWidget *parent) :
     QPushButton(parent),
     funptr(0)
@@ -50,6 +52,7 @@ void GuiButton::mousePressEvent(QMouseEvent *event)
     else
     {
         printf("Incorrect mouse button clicked.\nExpected: %d\nReceived: %d\n", Qt::LeftButton, event->button());
+        fflush(stdout);
     }
 }
 
@@ -64,6 +67,7 @@ void GuiButton::keyPressEvent(QKeyEvent *event)
     else
     {
         printf("Incorrect key was pressed.\nExpected: %d\nReceived: %d\n", Qt::Key_Space, event->key());
+        fflush(stdout);
     }
 }
 

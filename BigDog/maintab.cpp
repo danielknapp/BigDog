@@ -94,16 +94,3 @@ void MainTab::setViewController(ViewController* vc)
 {
     this->vc = vc;
 }
-
-
-
-
-//void MainTab::mousePressEvent(QMouseEvent *event)
-//{
-//    QWidget::mousePressEvent(event);
-//    if (event->button() == Qt::LeftButton)
-//    {
-//        printf("Clicked!\n");
-//    }
-//}
-

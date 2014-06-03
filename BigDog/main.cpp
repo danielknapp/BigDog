@@ -35,14 +35,13 @@ void rFindImages(Model *mod, QDir dir, ViewController *vc)
     int i = 0;
     while (true)
     {
-        printf("Call number %d\n", i);
-        fflush(stdout);
+//        printf("Call number %d\n", i);
+//        fflush(stdout);
         i++;
         mod->fileChecker(dir, vc);
         std::this_thread::sleep_for(std::chrono::milliseconds(2000));
 
     }
-    //std::terminate();
 }
 
 int main(int argc, char *argv[])

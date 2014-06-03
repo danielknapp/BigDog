@@ -7,6 +7,8 @@
 #include <thread>
 
 
+QString extension = "png";
+
 Model::Model() :
     vc(0)
 //    targetFiles(new std::set<QString>())
@@ -64,15 +66,19 @@ void Model::addImage(QFileInfo file, ViewController *vc, QString ext)
 bool Model::addValidImage(QFileInfo &file, ViewController *vc, QString ext)
 {
     QString fileName = file.fileName();
-    int count = 1;
+//    int count = 1;
     if (fileName.contains(ext))
     {
-        printf("got %d!\n%s\n", count++, file.absoluteFilePath().toStdString().c_str());
+//        printf("got %d!\n%s\n", count++, file.absoluteFilePath().toStdString().c_str());
 
+        // Creates file object for txt file corresponding to the jpg or png
         QString infoFileStr = file.absoluteFilePath();
-        infoFileStr = infoFileStr.remove(infoFileStr.size()-3,3).append("txt");
+        int extLen = extension.size();
+        infoFileStr = infoFileStr.remove(infoFileStr.size()-extLen,
+                                         extLen).append("txt");
         QFile infoFile(infoFileStr);
 
+        // Prepare for updating QLabels to be put into the gui
         QLabel *charT;
         QLabel *charC;
         QLabel *shapeT;
@@ -80,11 +86,14 @@ bool Model::addValidImage(QFileInfo &file, ViewController *vc, QString ext)
         QLabel *lat;
         QLabel *lon;
         QLabel *orien;
+
+        // Properties is an array for ease of reading the info into the appropriate QLabel
         QLabel** properties[] = {&charT, &charC, &shapeT, &shapeC, &lat, &lon, &orien};
         int propLen = (sizeof properties)/(sizeof *properties);
 
         if (!infoFile.open(QIODevice::ReadOnly))
         {
+            // File for the picture attributes did not open correctly, but fill in default vals
             printf("Problems finding file with name %s\n", infoFileStr.toStdString().c_str());
             charT = new QLabel("CharType");
             charC = new QLabel("CharColor");
@@ -113,7 +122,7 @@ bool Model::addValidImage(QFileInfo &file, ViewController *vc, QString ext)
                 *(properties[i++]) = temp;
             }
 
-            // ensure there is some label at least
+            // Ensure each QLabel is not null
             while (i < propLen)
             {
                 QLabel *temp = new QLabel("notFound");
@@ -130,11 +139,8 @@ bool Model::addValidImage(QFileInfo &file, ViewController *vc, QString ext)
         std::list<QLabel*> *lst = new std::list<QLabel*>();
         QLabel *picLbl = new QLabel();
         picLbl->setPixmap(QPixmap(file.absoluteFilePath()).scaledToWidth(150));
-//        QLabel *charT = new QLabel("CharType");
-//        QLabel *charC = new QLabel("CharColor");
-//        QLabel *shapeT = new QLabel("ShapeType");
-//        QLabel *shapeC = new QLabel("ShapeColor");
 
+        // add the QLabels to a lst that will be added in the gui
         lst->push_back(picLbl);
 
         for (int i = 0; i < propLen; i++)
@@ -142,13 +148,7 @@ bool Model::addValidImage(QFileInfo &file, ViewController *vc, QString ext)
             lst->push_back(*properties[i]);
         }
 
-//        lst->push_back(charT);
-//        lst->push_back(charC);
-//        lst->push_back(shapeT);
-//        lst->push_back(shapeC);
-//        lst->push_back(lat);
-//        lst->push_back(lon);
-
+        // actually add all the stuff to the gui
         vc->addRow(lst);
 
         delete lst;
@@ -158,35 +158,6 @@ bool Model::addValidImage(QFileInfo &file, ViewController *vc, QString ext)
         return false;
 }
 
-//void Model::recurseDir(QDir &dir, ViewController *vc)
-//{
-//    dir.refresh();
-//    QFileInfoList dirList = dir.entryInfoList();
-//    QString ext(".png");
-//    for (int i = 0; i < dirList.size(); i++)
-//    {
-//        QFileInfo file = dirList.at(i);
-//        QString fName = file.fileName();
-
-//        if (file.isDir())
-//        {
-//            if (fName.compare(".") == 0 || fName.compare("..") == 0)
-//                ; // skip
-//            else
-//                recurseDir(QDir(file.absoluteFilePath()), vc);
-//        }
-//        else if (!file.isDir())
-//        {
-//            if (targetFiles.find(file.absoluteFilePath()) == targetFiles.end())
-//            {
-//                targetFiles.insert(file.absoluteFilePath());
-////                printf("emitting now\n");
-////                fflush(stdout);
-//                emit imageFound(file, vc, ext);
-//            }
-//        }
-//    }
-//}
 
 /**
  * @brief Model::fileChecker
@@ -203,7 +174,7 @@ void Model::fileChecker(QDir dir, ViewController *vc)
 //    recurseDir(dir, vc);
     dir.refresh();
     QFileInfoList dirList = dir.entryInfoList();
-    QString ext(".png");
+    QString ext(extension);
     for (int i = 0; i < dirList.size(); i++)
     {
         QFileInfo file = dirList.at(i);

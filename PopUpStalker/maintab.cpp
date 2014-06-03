@@ -7,6 +7,7 @@ MainTab::MainTab(QWidget *parent)
     : QWidget(parent),
       mainLayout(new QGridLayout(this))
 {
+    // set the spacing for the gridLayout
 //    mainLayout->setHorizontalSpacing(30);
 //    mainLayout->setVerticalSpacing(20);
 }
@@ -20,6 +21,7 @@ MainTab::MainTab(QWidget *parent)
  */
 MainTab* MainTab::setupAsFirstTab()
 {
+    // Set a default display to PopUpStalker
     this->addColumn("Name1", 0);
     this->addColumn("Name2");
     this->addColumn("Name3");
@@ -55,21 +57,21 @@ MainTab* MainTab::setupAsFirstTab()
     lst->clear();
 
 
-    r1 = new QLabel();
-    r2 = new QLabel();
-    r3 = new QLabel();
-    r4 = new QLabel();
-    r5 = new QLabel();
-    r1->setPixmap(QPixmap("C:\\Users\\danny_000\\Downloads\\targets"
-                         "\\targets\\YNBGC\\1725601677_c.png").scaledToWidth(200));
-    r2->setPixmap(QPixmap("C:\\Users\\danny_000\\Downloads\\targets"
-                         "\\targets\\YNBGC\\1725601677_c.png").scaledToWidth(200));
-    r3->setPixmap(QPixmap("C:\\Users\\danny_000\\Downloads\\targets"
-                         "\\targets\\YNBGC\\1725601677_c.png").scaledToWidth(200));
-    r4->setPixmap(QPixmap("C:\\Users\\danny_000\\Downloads\\targets"
-                         "\\targets\\YNBGC\\1725601677_c.png").scaledToWidth(200));
-    r5->setPixmap(QPixmap("C:\\Users\\danny_000\\Downloads\\targets"
-                         "\\targets\\YNBGC\\1725601677_c.png").scaledToWidth(200));
+    r1 = new QLabel("Pixmap1");
+    r2 = new QLabel("Pixmap2");
+    r3 = new QLabel("Pixmap3");
+    r4 = new QLabel("Pixmap4");
+    r5 = new QLabel("Pixmap5");
+//    r1->setPixmap(QPixmap("C:\\Users\\danny_000\\Downloads\\targets"
+//                         "\\targets\\YNBGC\\1725601677_c.png").scaledToWidth(200));
+//    r2->setPixmap(QPixmap("C:\\Users\\danny_000\\Downloads\\targets"
+//                         "\\targets\\YNBGC\\1725601677_c.png").scaledToWidth(200));
+//    r3->setPixmap(QPixmap("C:\\Users\\danny_000\\Downloads\\targets"
+//                         "\\targets\\YNBGC\\1725601677_c.png").scaledToWidth(200));
+//    r4->setPixmap(QPixmap("C:\\Users\\danny_000\\Downloads\\targets"
+//                         "\\targets\\YNBGC\\1725601677_c.png").scaledToWidth(200));
+//    r5->setPixmap(QPixmap("C:\\Users\\danny_000\\Downloads\\targets"
+//                         "\\targets\\YNBGC\\1725601677_c.png").scaledToWidth(200));
     lst->push_back(r1);
     lst->push_back(r2);
     lst->push_back(r3);
@@ -134,6 +136,7 @@ void MainTab::addRow(std::list<QLabel*> *labels)
     }
 }
 
+// Used pretty much only for default screen now
 void MainTab::setRowInfo(std::list<QLabel*> *labels, int row)
 {
     if (row < 0)
@@ -148,6 +151,7 @@ void MainTab::setRowInfo(std::list<QLabel*> *labels, int row)
     }
 }
 
+// Used pretty much only for default screen now
 void MainTab::setGridInfo(QWidget *label, int row, int col)
 {
     if (row < 0)
@@ -160,26 +164,31 @@ void MainTab::setGridInfo(QWidget *label, int row, int col)
 
 }
 
+// Used pretty much only for default screen now
 void MainTab::setNames(std::list<QLabel*> *labels)
 {
     setRowInfo(labels, 0);
 }
 
+// Used pretty much only for default screen now
 void MainTab::setLats(std::list<QLabel*> *labels)
 {
     setRowInfo(labels, 1);
 }
 
+// Used pretty much only for default screen now
 void MainTab::setLongs(std::list<QLabel*> *labels)
 {
     setRowInfo(labels, 2);
 }
 
+// Used pretty much only for default screen now
 void MainTab::setImgs(std::list<QLabel*> *labels)
 {
     setRowInfo(labels, 3);
 }
 
+// Add up to 10 StalkerLabels to the gui
 void MainTab::setStalkerLabels(std::vector<StalkerLabels*> *labels)
 {
     int i = 0;
@@ -208,6 +217,7 @@ void MainTab::setStalkerLabels(std::vector<StalkerLabels*> *labels)
     }
 }
 
+// Sets the grid layout of this widget to be the one passed in
 void MainTab::setGridLayout(QGridLayout *gLayout)
 {
     if (mainLayout)

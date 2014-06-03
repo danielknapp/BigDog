@@ -46,6 +46,8 @@ void ViewController::setUpStalker()
     setModel(new Model());
     getModel()->setViewController(this);
 
+    // creates the QStackedWidget to handle switching between
+    // the StalkerLabels' vectors
     mainDisp = new QStackedWidget(scrollTab);
     MainTab * firstTab = (new MainTab())->setupAsFirstTab();
     mainDisp->addWidget(firstTab);
@@ -53,6 +55,8 @@ void ViewController::setUpStalker()
     QGridLayout * tron = mainTab->getGridLayout();
     tron->addWidget(mainDisp, 0, 0, 1, 2);
 
+    // buttons for next and prev that have the appropriate signals
+    // for the PopUpStalker's needs
     prev = new GuiButton("Prev");
     next = new GuiButton("Next");
 

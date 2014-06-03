@@ -40,7 +40,7 @@ void rFindImages(Model *mod, QDir dir, ViewController *vc)
 //        fflush(stdout);
 //        i++;
         mod->fileChecker(dir, vc);
-        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+        std::this_thread::sleep_for(std::chrono::milliseconds(2000));
 
     }
     //std::terminate();
@@ -75,6 +75,7 @@ int main(int argc, char *argv[])
     QObject::connect(currMod, SIGNAL(queueAdd(QString, QString)),
                      currMod, SLOT(addToNextQ(QString, QString)));
 
+    // The input directory in which we look for files
     QString inDir = getInputDir();
     // Setup for continuously finding images on a separate thread
     QDir currDir(inDir);

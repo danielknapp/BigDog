@@ -30,19 +30,24 @@ ViewController::~ViewController()
  */
 void ViewController::setUpBigDog()
 {
+    // used as the main window to display everthing on
     mainWin = new MainWindow();
+
+    // might be useful if you have more than one tab
     listScrollTabs = new std::list<QScrollArea*>();
+
+    // the widget that contains the tabs
     tabWidget = new QTabWidget(mainWin);
 
     // Sets up the first tab to be scrollable
     QScrollArea *firstScroll = new QScrollArea();
     listScrollTabs->push_back(firstScroll);
     firstScroll->setBackgroundRole(QPalette::Dark);
-    firstScroll->setWidgetResizable(true);
-    MainTab * firstTab = (new MainTab())->setupAsFirstTab();
-    view = firstTab;
-    firstScroll->setWidget(firstTab);
-    tabWidget->addTab(firstScroll, QWidget::tr("Main"));
+    firstScroll->setWidgetResizable(true); // scrollArea to update dynamically
+    MainTab * firstTab = (new MainTab())->setupAsFirstTab(); // sets up firstTab with the appropriate columns
+    view = firstTab; // set the view of the viewcontroller to be this tab
+    firstScroll->setWidget(firstTab); // put firstTab in the scrollArea
+    tabWidget->addTab(firstScroll, QWidget::tr("Main")); // add the scrollArea to the tabWidget
 
     // Sets up the second tab to be scrollable
 //    QScrollArea *secondScroll = new QScrollArea();

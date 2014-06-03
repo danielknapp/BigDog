@@ -46,22 +46,6 @@ public:
      */
     void fileChecker(QDir dir, ViewController *vc);
 
-    /**
-     * @brief Model::addValidImage
-     *      Adds an image to the view in vc if the file has the proper extension.
-     * @param file
-     *      QFileInfo object that represents the file image file.
-     * @param vc
-     *      ViewController object to add the image to its view.
-     * @param ext
-     *      The extension that file needs to have to be added to the ViewController
-     *      (note it is probably best to handle this before using this slot, so
-     *      ext may be unnecessary).
-     * @return
-     *      A boolean value representing whether the image was actually added or not
-     */
-//    bool addValidImage(QFileInfo &file, ViewController *vc, QString ext = QString(""));
-
     std::mutex *setMutex;
     std::unordered_set<std::string> *targetFiles;
 
@@ -73,19 +57,7 @@ signals:
 
 public slots:
 
-    /**
-     * @brief Model::addImage
-     *      A slot method to add an image to the view in vc.
-     * @param file
-     *      QFileInfo object that represents the file image file.
-     * @param vc
-     *      ViewController object to add the image to its view.
-     * @param ext
-     *      The extension that file needs to have to be added to the ViewController
-     *      (note it is probably best to handle this before using this slot, so
-     *      ext may be unnecessary).
-     */
-//    void addImage(QFileInfo file, ViewController *vc, QString ext);
+
     void addToNextQ(QString fp, QString fName);
 
     void nextClicked();
@@ -96,7 +68,7 @@ public slots:
 
 private:
     ViewController *vc;
-    std::mutex *myMutex;
+    std::mutex *qMutex;
 
     std::unique_lock<std::mutex> *nextQLock;
     std::condition_variable *qFull; // Condition if nextQ is full
