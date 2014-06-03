@@ -6,8 +6,7 @@
 #include <QFont>
 #include <thread>
 
-//std::mutex *qMutex = new std::mutex();
-//std::unordered_set<std::string> * targetFiles = new std::unordered_set<std::string>();
+QString extension = "png";
 
 Model::Model() :
     vc(0),
@@ -129,7 +128,8 @@ void Model::nextClicked()
 
             // get the path of the pictures corresponding txt file
             QString infoPath = picPath;
-            infoPath = infoPath.remove(infoPath.size()-3,3).append("txt");
+            int extLen = extension.size();
+            infoPath = infoPath.remove(infoPath.size()-extLen,extLen).append("txt");
 
             // remove the picture and text file
             if ( !QFile::remove(picPath) )
@@ -226,7 +226,8 @@ void Model::addToNextQ(QString fp, QString fName)
 {
     // get the file path for the txt file
     QString infoFileStr = fp;
-    infoFileStr = infoFileStr.remove(infoFileStr.size()-3,3).append("txt");
+    int extLen = extension.size();
+    infoFileStr = infoFileStr.remove(infoFileStr.size()-extLen,extLen).append("txt");
     QFile infoFile(infoFileStr);
 
 //    printf("File Name: %s\n", fName.toStdString().c_str());
@@ -322,7 +323,7 @@ void Model::fileChecker(QDir dir, ViewController *vc)
             // ensure either branch of the if unlocks the mutex afterwards
             setMutex->lock();
 
-            if (fName.contains(ext) &&
+            if (fName.contains(extension) &&
                     targetFiles->find(stdAbsFP) == targetFiles->end())
             {
 
@@ -332,7 +333,8 @@ void Model::fileChecker(QDir dir, ViewController *vc)
                 std::unique_lock<std::mutex> localLock(*qMutex);
 
                 QString infoFileStr = file.absoluteFilePath();
-                infoFileStr = infoFileStr.remove(infoFileStr.size()-3,3).append("txt");
+                int extLen = extension.size();
+                infoFileStr = infoFileStr.remove(infoFileStr.size()-extLen,extLen).append("txt");
                 QFile infoFile(infoFileStr);
 
                 if (!infoFile.open(QIODevice::ReadOnly))
